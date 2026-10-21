@@ -61,3 +61,5 @@ Avant d’ouvrir WhatsApp pour confirmer un achat du catalogue, le panier exige 
 La confirmation WhatsApp utilise un format court : un bloc par produit (nom, taille, couleur, quantité et broderie éventuelle), un sous-total et le paiement, puis les coordonnées du client en dernier. Aucun récapitulatif de variantes ou de quantités en double.
 
 La réussite de navigator.share signifie uniquement que le fichier est remis à l’interface de partage, jamais une confirmation de livraison WhatsApp. Annulation et erreurs conservent le fichier dans le formulaire. Les tests vérifient les octets originaux et le nom/type du File partagé, le téléchargement de secours et l’annulation ; l’envoi réel dans l’application WhatsApp ne peut pas être automatisé dans Chromium cloud.
+
+Le formulaire de design affiche la légende exacte (support, taille, couleur et détails) et permet de la copier. Elle est transmise avec le fichier dans Web Share. Si WhatsApp ne reprend pas le texte automatiquement, le client peut le coller dans la légende avant l’envoi ; le comportement de l’application cible ne peut pas être garanti par le site.
