@@ -22,15 +22,15 @@ test('catalogue, filtres, favoris et commande WhatsApp',async({page})=>{
  await page.keyboard.press('Escape');await expect(dialog).toHaveCount(0);
 });
 test('personnalisation : fichier obligatoire, aperçu et détails du projet',async({page})=>{
- await page.goto('/');await page.getByRole('button',{name:'Parlons de ton projet'}).click();
+ await page.goto('/');await page.getByRole('button',{name:'Envoyer mon design (fichier)'}).click();
  await expect(page.getByRole('alert')).toContainText('Ajoute ton design');
  await page.locator('#design-upload').setInputFiles({name:'mon-design.png',mimeType:'image/png',buffer:Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aoccAAAAASUVORK5CYII=','base64')});
  await expect(page.getByAltText('Aperçu de votre design')).toBeVisible();
  await page.getByLabel('Le support').selectOption('Casquette');
  await expect(page.getByLabel('La taille souhaitée')).toHaveValue('Unique');
  await page.getByPlaceholder('Emplacement du print, quantité, couleur…').fill('Print devant');
- await page.evaluate(()=>{window.open=(url)=>{window.__orderUrl=url}});await page.getByRole('button',{name:'Parlons de ton projet'}).click();
- const u=new URL(await page.evaluate(()=>window.__orderUrl));expect(u.searchParams.get('text')).toContain('mon-design.png');expect(u.searchParams.get('text')).toContain('Casquette');expect(u.searchParams.get('text')).toContain('Print devant');
+ await page.evaluate(()=>{Object.defineProperty(navigator,'canShare',{configurable:true,value:()=>false})});await page.getByRole('button',{name:'Envoyer mon design (fichier)'}).click();
+ await expect(page.getByRole('region',{name:'Envoyer le fichier manuellement'})).toBeVisible();const u=new URL(await page.getByRole('link',{name:'Ouvrir la conversation WhatsApp'}).getAttribute('href'));expect(u.searchParams.get('text')).toContain('Casquette');expect(u.searchParams.get('text')).toContain('Print devant');
 });
 test('mobile : aucun débordement, menu et illustrations accessibles',async({page})=>{
  await page.setViewportSize({width:390,height:844});await page.goto('/');
