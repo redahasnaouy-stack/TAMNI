@@ -67,3 +67,9 @@ Le formulaire de design affiche la légende exacte (support, taille, couleur et 
 ## Thème TAMNI Maison
 
 Le thème global est défini dans `src/luxury.css`, chargé en dernier. Les variables de couleur (charbon, ivoire, champagne) y sont centralisées. Le hero conserve le logo argenté original et le catalogue conserve les photos originales sans recadrage. Styles coordonnés pour les fiches, le panier, les formulaires, le partage de design et l’administration.
+
+## Netlify
+
+Importer le dépôt GitHub `redahasnaouy-stack/TAMNI` dans Netlify, branche `main`. `netlify.toml` configure Node 24, `npm run build` et le dossier publié `dist`. Aucun secret supplémentaire n’est requis pour construire le site.
+
+Préférer l’intégration GitHub à un dépôt manuel de ZIP : les publications depuis l’administration créent un commit GitHub et déclenchent ainsi un nouveau déploiement Netlify. L’administration reste accessible via `/#admin` et utilise le même jeton GitHub. Attendre le déploiement avant de vérifier le catalogue côté public. Le fichier `catalog.json` n’est pas mis en cache ; les assets de build versionnés sont mis en cache durablement. Le branchement initial au compte Netlify est à effectuer par le propriétaire dans Netlify.
