@@ -1,6 +1,6 @@
 # TAMNI — Wear your story
 
-Boutique streetwear React + Vite, en français, adaptée aux mobiles. Catalogue crème et terracotta en trois colonnes sur ordinateur (deux sur mobile), favoris, choix de taille/couleur dans la fiche produit uniquement, panier persistant et confirmation WhatsApp, personnalisation avec aperçu de fichier.
+Boutique streetwear React + Vite, en français, adaptée aux mobiles. Catalogue luxe en noir charbon, ivoire et champagne en trois colonnes sur ordinateur (deux sur mobile), favoris, choix de taille/couleur dans la fiche produit uniquement, panier persistant et confirmation WhatsApp, personnalisation avec aperçu de fichier.
 
 ## Développement
 
@@ -63,3 +63,7 @@ La confirmation WhatsApp utilise un format court : un bloc par produit (nom, tai
 La réussite de navigator.share signifie uniquement que le fichier est remis à l’interface de partage, jamais une confirmation de livraison WhatsApp. Annulation et erreurs conservent le fichier dans le formulaire. Les tests vérifient les octets originaux et le nom/type du File partagé, le téléchargement de secours et l’annulation ; l’envoi réel dans l’application WhatsApp ne peut pas être automatisé dans Chromium cloud.
 
 Le formulaire de design affiche la légende exacte (support, taille, couleur et détails) et permet de la copier. Elle est transmise avec le fichier dans Web Share. Si WhatsApp ne reprend pas le texte automatiquement, le client peut le coller dans la légende avant l’envoi ; le comportement de l’application cible ne peut pas être garanti par le site.
+
+## Thème TAMNI Maison
+
+Le thème global est défini dans `src/luxury.css`, chargé en dernier. Les variables de couleur (charbon, ivoire, champagne) y sont centralisées. Le hero conserve le logo argenté original et le catalogue conserve les photos originales sans recadrage. Styles coordonnés pour les fiches, le panier, les formulaires, le partage de design et l’administration.
