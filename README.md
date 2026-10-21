@@ -18,9 +18,9 @@ npm run dev -- --port 5173
 
 ## Catalogue et commandes
 
-- Catalogue : `src/catalog.js` ; illustrations : `public/products/`.
+- Catalogue : `src/catalog.js` ; photos : `public/products/`.
 - WhatsApp : +212 617 571 113 ; Instagram : @tamni_streetwear.
-- Les illustrations SVG sont provisoires, inspirées des exemples fournis ; elles ne sont pas les photos originales.
+- Les cinq photos JPEG originales fournies par le propriétaire sont utilisées sans retouche dans le catalogue et la bannière.
 - Aucun prix ni stock réel n'a été fourni. Les tailles et couleurs sont donc des préférences à confirmer, pas un inventaire garanti. Ajouter les disponibilités réelles avant la mise en vente définitive.
 - Les fichiers personnalisés restent dans le navigateur. Le lien WhatsApp transmet les détails et le nom du fichier ; le client doit joindre le fichier manuellement à la conversation. Instagram ouvre le profil pour un envoi manuel.
 - Aucune base de données, aucun paiement ni téléversement serveur n'est configuré. Les commandes sont confirmées directement par l'équipe.
