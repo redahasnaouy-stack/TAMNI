@@ -17,7 +17,7 @@ export function validateCatalog(value){
 }
 export function photoUrl(p){return p.image?.startsWith('data:')?p.image:`${import.meta.env.BASE_URL}${p.image||`products/${p.id}.jpeg`}`}
 export async function githubRequest(token,path,options={}){
- let response;try{response=await fetch(`https://api.github.com/repos/${repository}/${path}`,{...options,headers:{Accept:'application/vnd.github+json',Authorization:`Bearer ${token}`,'X-GitHub-Api-Version':'2022-11-28',...options.headers}})}catch{throw new Error('Connexion à GitHub impossible. Le changement n’a pas été publié. Vérifie ta connexion et réessaie.')} 
+ let response;try{response=await fetch(`https://api.github.com/repos/${repository}/${path}`,{...options,headers:{Accept:'application/vnd.github+json',Authorization:`Bearer ${token}`,'X-GitHub-Api-Version':'2022-11-28',...options.headers}})}catch{throw new Error('Connexion à GitHub impossible. Le changement n’a pas été publié. Vérifie ta connexion et réessaie.')}
  if(!response.ok){if(response.status===401||response.status===403)throw new Error('Accès refusé. Vérifie le jeton, le dépôt TAMNI et la permission Contents : lecture et écriture.');if(response.status===409||response.status===422)throw new Error('Le dépôt a changé. Recharge le catalogue avant de publier.');throw new Error(`GitHub ne peut pas terminer cette opération (${response.status}).`)}
  return response.json();
 }
