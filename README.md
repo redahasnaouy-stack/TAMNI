@@ -1,6 +1,6 @@
 # TAMNI — Wear your story
 
-Boutique streetwear React + Vite, en français, adaptée aux mobiles. Catalogue en grille verte de quatre colonnes sur ordinateur, favoris, choix directs de couleur/taille, panier persistant et confirmation WhatsApp, personnalisation avec aperçu de fichier.
+Boutique streetwear React + Vite, en français, adaptée aux mobiles. Catalogue crème et terracotta en trois colonnes sur ordinateur (deux sur mobile), favoris, choix de taille/couleur dans la fiche produit uniquement, panier persistant et confirmation WhatsApp, personnalisation avec aperçu de fichier.
 
 ## Développement
 
