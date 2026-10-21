@@ -43,3 +43,7 @@ Modifier les champs et enregistrer le brouillon, puis cliquer « Publier les mod
 Photos admin : JPG/PNG/WEBP jusqu’à 450 Ko, intégrées au catalogue. Taille totale du catalogue limitée à 900 Ko (utiliser des photos compressées). Masquer conserve le produit mais le retire du magasin ; supprimer exige une confirmation puis une publication. Le panier recalcule les prix depuis le catalogue courant.
 
 Les tests admin simulent l’API GitHub : accès refusé, édition, ajout de photo, suppression, publication atomique et conflit concurrent. Une publication réelle depuis le navigateur nécessite le jeton du propriétaire et n’a pas été effectuée avec un jeton utilisateur pendant le développement.
+
+## Hero
+
+Le hero cinématographique (CSS, sans vidéo ni dépendance externe) est dans `src/CinematicHero.jsx` et `src/cinematic.css`. Il utilise une photo du catalogue en arrière-plan et respecte prefers-reduced-motion. Le logo original vu dans le chat n’a pas encore été fourni comme fichier accessible : la marque reste affichée sous forme typographique en attendant le fichier PNG/JPEG/SVG ou ZIP.
