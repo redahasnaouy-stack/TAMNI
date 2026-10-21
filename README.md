@@ -47,3 +47,5 @@ Les tests admin simulent l’API GitHub : accès refusé, édition, ajout de pho
 ## Hero
 
 Le hero cinématographique (CSS, sans vidéo ni dépendance externe) est dans `src/CinematicHero.jsx` et `src/cinematic.css`. Il utilise une photo du catalogue en arrière-plan et respecte prefers-reduced-motion. Le logo original fourni dans logo.zip est conservé sans retouche dans `public/brand/tamni-logo.jpeg`. Il apparaît dans l’en-tête, le hero, le pied de page, l’administration et comme favicon.
+
+Le logo de la barre supérieure utilise `public/brand/tamni-logo-transparent.png` (version à fond transparent). Le hero et les autres emplacements gardent le JPEG original.
