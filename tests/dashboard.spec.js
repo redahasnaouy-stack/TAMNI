@@ -1,0 +1,15 @@
+import {test,expect} from '@playwright/test';
+import {mockGithub,login,catalog} from './adminHelpers';
+test('dashboard RTL : chiffres réels, navigation et recherche produits',async({page})=>{
+ await mockGithub(page);await login(page,{products:false});
+ await expect(page.getByRole('heading',{name:/مرحبا بعودتك/})).toBeVisible();await expect(page.locator('.dashboard-shell')).toHaveAttribute('dir','rtl');
+ const stats=page.locator('.dashboard-metric');await expect(stats).toHaveCount(4);await expect(stats.nth(0).locator('strong')).toHaveText(String(catalog.length));await expect(stats.nth(1).locator('strong')).toHaveText(String(catalog.filter(p=>p.active!==false).length));
+ await expect(page.getByText('منتجات من متجرك',{exact:true})).toBeVisible();await page.getByRole('button',{name:/^المنتجات/}).click();await page.getByLabel('Rechercher un produit').fill('Angel');await expect(page.locator('.admin-products article')).toHaveCount(1);await expect(page.locator('.admin-products article')).toContainText('Angel — After dark');await page.getByLabel('Visibilité',{exact:true}).selectOption('hidden');await expect(page.getByText('Aucun produit ne correspond à ta recherche.')).toBeVisible();
+ await page.getByRole('button',{name:'الطلبات',exact:true}).click();await expect(page.getByText('لا توجد قاعدة طلبات مربوطة')).toBeVisible();await expect(page.getByRole('link',{name:/فتح WhatsApp/})).toHaveAttribute('href','https://wa.me/212617571113');
+ await page.getByRole('button',{name:'إحصائيات الكاتالوغ',exact:true}).click();await expect(page.getByText('تحتاج ربط خدمة إحصائيات')).toBeVisible();await page.screenshot({path:'/tmp/tamni-dashboard-analytics.png',fullPage:true});
+ await page.getByRole('button',{name:'لوحة التحكم',exact:true}).click();await page.screenshot({path:'/tmp/tamni-dashboard-desktop.png',fullPage:true});
+});
+test('dashboard mobile : menu repliable, ajout depuis l’accueil et aucun débordement',async({page})=>{
+ await page.setViewportSize({width:390,height:844});await mockGithub(page);await login(page,{products:false});await expect(page.getByRole('button',{name:'لوحة التحكم',exact:true})).not.toBeVisible();await page.getByRole('button',{name:'فتح قائمة الإدارة'}).click();await expect(page.getByRole('button',{name:'لوحة التحكم',exact:true})).toBeVisible();await page.getByRole('button',{name:'متجري',exact:true}).click();await expect(page.getByRole('heading',{name:'روابط متجرك'})).toBeVisible();await expect(page.getByRole('button',{name:'لوحة التحكم',exact:true})).not.toBeVisible();
+ await page.getByRole('button',{name:'إضافة منتج',exact:true}).click();await expect(page.getByRole('heading',{name:'Nouvelle pièce'})).toBeVisible();await page.getByLabel('Nom du produit').fill('Nouvelle création');expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);await page.getByRole('button',{name:'Annuler',exact:true}).click();await page.getByRole('button',{name:'فتح قائمة الإدارة'}).click();await page.getByRole('button',{name:'لوحة التحكم',exact:true}).click();await page.screenshot({path:'/tmp/tamni-dashboard-mobile.png',fullPage:true});
+});

@@ -12,6 +12,7 @@ import initialCatalog from '../public/catalog.json';
 import {validateCatalog,formatPrice,photoUrl} from './catalogStore';
 import './admin.css';
 import './luxury.css';
+import './dashboard.css';
 
 function Garment({product,hero=false}) {return <div className={`garment-art ${hero?'hero-garment':''}`}><img src={photoUrl(product)} alt={`${product.label} ${product.name}`} /></div>}
 const colorChoices=[['Noir','#151515'],['Blanc','#f7f4eb'],['Bordeaux','#833342'],['Vert olive','#737c45'],['Beige','#c5b68d'],['Marron','#725443']];

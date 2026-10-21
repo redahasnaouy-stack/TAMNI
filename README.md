@@ -73,3 +73,9 @@ Le thème global est défini dans `src/luxury.css`, chargé en dernier. Les vari
 Importer le dépôt GitHub `redahasnaouy-stack/TAMNI` dans Netlify, branche `main`. `netlify.toml` configure Node 24, `npm run build` et le dossier publié `dist`. Aucun secret supplémentaire n’est requis pour construire le site.
 
 Préférer l’intégration GitHub à un dépôt manuel de ZIP : les publications depuis l’administration créent un commit GitHub et déclenchent ainsi un nouveau déploiement Netlify. L’administration reste accessible via `/#admin` et utilise le même jeton GitHub. Attendre le déploiement avant de vérifier le catalogue côté public. Le fichier `catalog.json` n’est pas mis en cache ; les assets de build versionnés sont mis en cache durablement. Le branchement initial au compte Netlify est à effectuer par le propriétaire dans Netlify.
+
+## Dashboard d’administration
+
+Après connexion, l’administration affiche un dashboard RTL arabe inspiré de la référence fournie : sidebar à droite, interface claire, cartes d’indicateurs réels et répartition des catégories. Les métriques sont calculées depuis le catalogue (total, publiés, masqués, prix moyen), sans chiffres de ventes ou de visites inventés. Le menu Produits conserve l’édition existante et ajoute recherche et filtre de visibilité. Sur mobile, le menu est repliable. Les pages Boutique et Paramètres présentent les liens et informations actuelles, sans prétendre les modifier.
+
+Les commandes, le chiffre d’affaires et les visites ne sont pas synchronisés : ces espaces l’indiquent explicitement. Les commandes restent confirmées via WhatsApp ; une base privée et une intégration sont nécessaires pour les suivre automatiquement. Aucune donnée de client n’est ajoutée au dépôt public. L’authentification et la publication GitHub restent identiques.
