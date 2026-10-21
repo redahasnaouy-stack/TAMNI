@@ -1,0 +1,36 @@
+.parcel-print-root{display:none}
+.parcel-ticket-preview{margin-top:24px;padding-top:20px;border-top:1px solid #3d4730}
+.parcel-ticket-preview>p{font-size:12px;color:var(--champagne);margin:0 0 14px}
+.parcel-ticket-preview>small{display:block;font-size:11px;line-height:1.8;color:#b3bea0;margin-top:12px}
+.parcel-ticket{box-sizing:border-box;width:100mm;max-width:100%;min-height:150mm;margin:0;padding:6mm;background:#fff;color:#111;font-family:Arial,Tahoma,sans-serif;font-size:10pt;line-height:1.4;text-align:right;border:1px solid #ccc;overflow-wrap:anywhere;color-scheme:light}
+.parcel-ticket *{box-sizing:border-box;color:inherit}
+.parcel-ticket-brand{display:flex;justify-content:space-between;align-items:center;gap:4mm;border-bottom:2px solid #111;padding-bottom:3mm}
+.parcel-ticket-brand>strong{font:700 25pt Arial,sans-serif;letter-spacing:2px}
+.parcel-ticket-brand>span{font-size:10pt;text-align:left}
+.parcel-ticket small{display:block;font-size:7pt;line-height:1.4}
+.parcel-ticket-reference{display:flex;justify-content:space-between;align-items:center;gap:3mm;padding:3mm 0;border-bottom:1px solid #bbb;font-size:8pt}
+.parcel-ticket-recipient{padding:3mm 0;border-bottom:1px solid #111}
+.parcel-ticket-caption{font-size:7pt;letter-spacing:.3px}
+.parcel-ticket-recipient h2{font:700 16pt/1.3 Arial,Tahoma,sans-serif;margin:2mm 0;overflow-wrap:anywhere}
+.parcel-ticket-recipient>div{display:flex;justify-content:space-between;gap:3mm;flex-wrap:wrap;font-size:12pt}
+.parcel-ticket-items{width:100%;border-collapse:collapse;table-layout:fixed;margin:3mm 0;font-size:9pt;white-space:normal}
+.parcel-ticket-items th{text-align:right;font-size:7pt;padding:1.5mm 0;border-bottom:1px solid #aaa;font-weight:400}
+.parcel-ticket-items th:last-child,.parcel-ticket-items td:last-child{width:10mm;text-align:center}
+.parcel-ticket-items td{padding:2mm 0;vertical-align:top;border-bottom:1px solid #ddd;line-height:1.35}
+.parcel-ticket-items td strong{display:block;font-weight:700}
+.parcel-ticket-items td span{display:block;font-size:8pt;margin-top:1mm}
+.parcel-ticket-totals{font-size:9pt;margin-top:2mm}
+.parcel-ticket-totals>div{display:flex;align-items:center;justify-content:space-between;gap:3mm;padding:1mm 0}
+.parcel-ticket-payment{display:flex;align-items:center;justify-content:space-between;gap:3mm;border:2px solid #111;padding:3mm;margin-top:3mm;break-inside:avoid}
+.parcel-ticket-payment>span{font-size:10pt;font-weight:700}
+.parcel-ticket-payment>strong{font:700 19pt Arial,sans-serif;white-space:nowrap}
+.parcel-ticket-note{font-size:7pt;line-height:1.4;margin:2mm 0 0}
+.parcel-ticket-footer{display:flex;justify-content:space-between;gap:2mm;flex-wrap:wrap;font-size:7pt;border-top:1px solid #aaa;padding-top:2mm;margin-top:3mm;break-inside:avoid}
+@page tamni-parcel{size:100mm 150mm;margin:0}
+@media print{
+ html:has(.parcel-print-root),body:has(.parcel-print-root){margin:0!important;padding:0!important;background:#fff!important;width:100mm!important;min-width:0!important;height:auto!important;overflow:visible!important}
+ body:has(.parcel-print-root)>*{display:none!important}
+ body>.parcel-print-root{page:tamni-parcel;display:block!important;position:static!important;margin:0!important;padding:0!important;width:100mm!important}
+ .parcel-ticket{border:0;max-width:none;width:100mm;min-height:0;padding:6mm;print-color-adjust:exact;-webkit-print-color-adjust:exact}
+ .parcel-ticket-items tr{break-inside:avoid}
+}

@@ -88,3 +88,9 @@ Sur Netlify, `netlify/functions/tamni-api.mjs` enregistre les commandes et les v
 Netlify injecte automatiquement le contexte Blobs dans les Functions modernes. Aucun secret Blobs n’est à ajouter au navigateur. Publier depuis GitHub via Netlify (ou Trigger deploy si nécessaire), puis vérifier `/.netlify/functions/tamni-api?resource=health` : la réponse attendue est `{"ready":true}`. Un ZIP statique ou GitHub Pages seul ne déploie pas ces fonctions ; seuls le catalogue et la commande WhatsApp de secours y fonctionnent. Les données privées restent attachées au site Netlify et ne sont pas incluses dans les archives de build. Ne pas exporter le CSV de clients vers le dépôt public.
 
 Validation : `npm run test:server` vérifie authentification, contrôle des prix et variantes, idempotence, conflits, rôles et comptage de visites avec un stockage simulé ; `npm test` teste les parcours navigateur et les API simulées. Aucun vrai client ni jeton utilisateur n’a été utilisé dans ces tests.
+
+## Carte colis compacte
+
+Le bouton « طباعة بطاقة الطرد · 10 × 15 سم » dans le détail d’une commande imprime uniquement une carte blanche et noire de 100 × 150 mm, avec nom/téléphone/ville, référence, produits et variantes, quantités, livraison et montant à encaisser. Le montant restant d’une commande payée est zéro ; les frais non confirmés sont signalés. Aucun champ de formulaire ni navigation n’est imprimé. Une commande très longue peut utiliser plusieurs cartes plutôt que tronquer ses articles.
+
+Dans le dialogue d’impression, utiliser le papier 100 × 150 mm, l’échelle 100 % et désactiver les en-têtes/pieds de page du navigateur. Sur imprimante A4, la carte peut être imprimée à taille réelle puis découpée ; le format physique dépend des papiers acceptés par l’imprimante. La prévisualisation est disponible avant impression. Les tests PDF utilisent aussi `pdfinfo` et `pdftotext` de Poppler pour contrôler la taille, le nombre de pages et le contenu.
