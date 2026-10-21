@@ -57,3 +57,5 @@ Les requêtes admin GitHub désactivent le cache. En cas d’avancement concurre
 Le paiement se fait en espèces à la livraison, selon l’instruction du propriétaire. Les frais et délais, non fournis, sont confirmés par WhatsApp selon la ville. Informations affichées dans la section livraison et dans le panier.
 
 Avant d’ouvrir WhatsApp pour confirmer un achat du catalogue, le panier exige uniquement le nom, le téléphone et la ville. Les champs vides, noms/villes composés d’espaces et numéros invalides bloquent l’ouverture. Les numéros marocains locaux et internationaux sont acceptés. Le bouton de commande rapide d’une fiche passe aussi par le panier et ce formulaire. Les coordonnées et le récapitulatif complet sont inclus dans le message WhatsApp. Aucune persistance de ces coordonnées dans localStorage, sessionStorage ou GitHub. Le formulaire de design personnalisé reste une prise de contact séparée.
+
+La confirmation WhatsApp utilise un format court : un bloc par produit (nom, taille, couleur, quantité et broderie éventuelle), un sous-total et le paiement, puis les coordonnées du client en dernier. Aucun récapitulatif de variantes ou de quantités en double.

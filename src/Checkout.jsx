@@ -1,7 +1,7 @@
 import React,{useState,useRef} from 'react';
 import {MessageCircle,Truck,CreditCard} from 'lucide-react';
 import {formatPrice} from './catalogStore';
-import {orderUrl} from './catalog';
+import {whatsappNumber} from './catalog';
 import './checkout.css';
 export function DeliveryInfo({compact=false}){
  const content=<><div><Truck size={21}/><h3>Livraison au Maroc</h3><p>Les frais et le délai sont confirmés sur WhatsApp selon ta ville, avant la validation de ta commande.</p></div><div><CreditCard size={21}/><h3>Paiement à la livraison</h3><p>Règle ta commande en espèces au moment de recevoir ton colis. Aucun paiement en ligne ni avance n’est demandé.</p></div></>;
@@ -9,7 +9,18 @@ export function DeliveryInfo({compact=false}){
 }
 export function checkoutUrl(cart,customer){
  const total=cart.reduce((n,x)=>n+x.product.price*x.quantity,0);
- return orderUrl({customer:{name:customer.name.trim(),phone:customer.phone.trim(),city:customer.city.trim()},product:cart.map((x,i)=>`${i+1}. ${x.product.label} — ${x.product.name} | Taille : ${x.size} | Couleur : ${x.color} | Quantité : ${x.quantity} | Prix unitaire : ${formatPrice(x.product.price)}${x.embroidery?` | Broderie demandée : ${x.text||'À préciser'}`:''}`).join('\n'),size:'Voir chaque article',color:'Voir chaque article',quantity:cart.reduce((n,x)=>n+x.quantity,0),notes:`Sous-total : ${formatPrice(total)} (hors livraison et broderie). Merci de confirmer les frais et le délai avant validation. Paiement : en espèces à la livraison.`});
+ const productLines=cart.map((x,i)=>[
+  `${i+1}. ${x.product.label} — ${x.product.name}`,
+  `Taille : ${x.size} · Couleur : ${x.color} · Quantité : ${x.quantity}`,
+  ...(x.embroidery?[`Broderie demandée : ${x.text?.trim()||'À préciser'}`]:[])
+ ].join('\n')).join('\n\n');
+ const text=[
+  '*Commande TAMNI*',
+  productLines,
+  `Sous-total : ${formatPrice(total)} (hors livraison${cart.some(x=>x.embroidery)?' et broderie':''})\nPaiement : en espèces à la livraison`,
+  `*Coordonnées*\nClient : ${customer.name.trim()}\nTéléphone : ${customer.phone.trim()}\nVille : ${customer.city.trim()}`
+ ].join('\n\n');
+ return `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(text)}`;
 }
 export default function Checkout({cart,customer,setCustomer}){
  const [error,setError]=useState('');const form=useRef();

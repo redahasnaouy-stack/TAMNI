@@ -16,3 +16,12 @@ test('validation téléphone et espaces puis transmission du client et du panier
 test('commande rapide ne contourne pas les coordonnées et le formulaire reste accessible sur mobile',async({page})=>{
  await page.setViewportSize({width:390,height:844});await page.goto('/');await page.locator('article.product').first().getByRole('button',{name:'Découvrir la pièce'}).click();await page.getByRole('dialog').getByRole('button',{name:'L',exact:true}).click();await page.getByRole('dialog').getByRole('button',{name:'Commander sur WhatsApp'}).click();const cart=page.getByRole('dialog',{name:'Mon panier'});await expect(cart.getByLabel('Nom complet')).toBeVisible();await cart.getByLabel('Ville').scrollIntoViewIfNeeded();await expect(cart.getByRole('button',{name:'Confirmer sur WhatsApp'})).toBeVisible();await cart.getByText('Livraison et paiement : ce qu’il faut savoir').click();await expect(cart.getByRole('heading',{name:'Paiement à la livraison'})).toBeVisible();expect(await cart.evaluate(el=>el.scrollWidth<=el.clientWidth)).toBe(true);
 });
+
+test('message WhatsApp court : produits regroupés puis coordonnées en bas',async({page})=>{
+ const cart=await addProduct(page);await cart.getByRole('button',{name:'Continuer mes achats'}).click();
+ await page.locator('article.product').nth(1).getByRole('button',{name:'Découvrir la pièce'}).click();await page.getByRole('dialog').getByRole('button',{name:'L',exact:true}).click();await page.getByRole('dialog').getByRole('button',{name:'Marron',exact:true}).click();await page.getByRole('dialog').getByRole('button',{name:'Augmenter la quantité'}).click();await page.getByRole('dialog').getByRole('button',{name:'Ajouter au panier'}).click();
+ const url=await submitCheckout(page,cart,{name:'Sara Alaoui',phone:'0612345678',city:'Rabat'}),text=url.searchParams.get('text');
+ expect(text).toMatch(/^\*Commande TAMNI\*\n\n1\. T-shirt oversize — Palestine — Heritage\nTaille : M · Couleur : Noir · Quantité : 1\n\n2\. Hoodie oversize — Darwish — Poésie libre\nTaille : L · Couleur : Marron · Quantité : 2\n\nSous-total :/);
+ expect(text).toMatch(/\n\n\*Coordonnées\*\nClient : Sara Alaoui\nTéléphone : 0612345678\nVille : Rabat$/);
+ expect(text).not.toContain('Voir chaque article');expect(text).not.toContain('Prix unitaire');expect(text.match(/Taille :/g)).toHaveLength(2);expect(text.match(/Client :/g)).toHaveLength(1);expect(text.length).toBeLessThan(550);
+});
