@@ -1,4 +1,5 @@
 import {test,expect} from '@playwright/test';
+import {submitCheckout} from './checkoutHelpers';
 import fs from 'node:fs';
 const catalog=JSON.parse(fs.readFileSync('public/catalog.json','utf8'));
 async function mockGithub(page,{denied=false,conflict=false,denyWrite=false,branchRace=false,validationError=false}={}){
@@ -23,8 +24,8 @@ test('prix initiaux, sous-total et prix transmis à WhatsApp',async({page})=>{
  for(let i=0;i<catalog.length;i++){expect(catalog[i].price).toBeGreaterThanOrEqual(90);expect(catalog[i].price).toBeLessThanOrEqual(120);await expect(cards.nth(i).locator('.product-price')).toContainText(`${catalog[i].price} DH`)}
  await cards.first().getByRole('button',{name:'Découvrir la pièce'}).click();
  const dialog=page.getByRole('dialog');await dialog.getByRole('button',{name:'M',exact:true}).click();await dialog.getByRole('button',{name:'Augmenter la quantité'}).click();
- const url=new URL(await dialog.getByRole('link',{name:'Commander sur WhatsApp'}).getAttribute('href'));expect(url.searchParams.get('text')).toContain(`Sous-total : ${catalog[0].price*2} DH`);
- await dialog.getByRole('button',{name:'Ajouter au panier'}).click();await expect(page.locator('.cart-subtotal')).toContainText(`${catalog[0].price*2} DH`);
+ await dialog.getByRole('button',{name:'Ajouter au panier'}).click();const cart=page.getByRole('dialog',{name:'Mon panier'});await expect(page.locator('.cart-subtotal')).toContainText(`${catalog[0].price*2} DH`);
+ const url=await submitCheckout(page,cart);expect(url.searchParams.get('text')).toContain(`Sous-total : ${catalog[0].price*2} DH`);
 });
 test('accès admin refusé sans accès GitHub',async({page})=>{
  await mockGithub(page,{denied:true});await login(page);await expect(page.getByRole('alert')).toContainText('Accès refusé');await expect(page.getByRole('button',{name:'Publier les modifications'})).toHaveCount(0);

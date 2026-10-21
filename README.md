@@ -51,3 +51,9 @@ Le hero cinématographique (CSS, sans vidéo ni dépendance externe) est dans `s
 Le logo de la barre supérieure utilise `public/brand/tamni-logo-transparent.png` (version à fond transparent). Le hero et les autres emplacements gardent le JPEG original.
 
 Les requêtes admin GitHub désactivent le cache. En cas d’avancement concurrent de la branche, une nouvelle tentative est faite uniquement après relecture du catalogue au nouveau commit ; les modifications externes du catalogue restent protégées. Les erreurs GitHub 422 affichent leur cause réelle et ne sont plus toutes classées comme conflit.
+
+## Livraison, paiement et coordonnées de commande
+
+Le paiement se fait en espèces à la livraison, selon l’instruction du propriétaire. Les frais et délais, non fournis, sont confirmés par WhatsApp selon la ville. Informations affichées dans la section livraison et dans le panier.
+
+Avant d’ouvrir WhatsApp pour confirmer un achat du catalogue, le panier exige uniquement le nom, le téléphone et la ville. Les champs vides, noms/villes composés d’espaces et numéros invalides bloquent l’ouverture. Les numéros marocains locaux et internationaux sont acceptés. Le bouton de commande rapide d’une fiche passe aussi par le panier et ce formulaire. Les coordonnées et le récapitulatif complet sont inclus dans le message WhatsApp. Aucune persistance de ces coordonnées dans localStorage, sessionStorage ou GitHub. Le formulaire de design personnalisé reste une prise de contact séparée.

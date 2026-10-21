@@ -1,0 +1,19 @@
+import React,{useState,useRef} from 'react';
+import {MessageCircle,Truck,CreditCard} from 'lucide-react';
+import {formatPrice} from './catalogStore';
+import {orderUrl} from './catalog';
+import './checkout.css';
+export function DeliveryInfo({compact=false}){
+ const content=<><div><Truck size={21}/><h3>Livraison au Maroc</h3><p>Les frais et le délai sont confirmés sur WhatsApp selon ta ville, avant la validation de ta commande.</p></div><div><CreditCard size={21}/><h3>Paiement à la livraison</h3><p>Règle ta commande en espèces au moment de recevoir ton colis. Aucun paiement en ligne ni avance n’est demandé.</p></div></>;
+ return compact?<details className="checkout-delivery"><summary>Livraison et paiement : ce qu’il faut savoir</summary><div>{content}</div></details>:<section id="livraison" className="delivery-section"><div><span className="eyebrow">AVANT DE COMMANDER</span><h2>De notre atelier<br/>jusqu’à toi.</h2></div>{content}</section>
+}
+export function checkoutUrl(cart,customer){
+ const total=cart.reduce((n,x)=>n+x.product.price*x.quantity,0);
+ return orderUrl({customer:{name:customer.name.trim(),phone:customer.phone.trim(),city:customer.city.trim()},product:cart.map((x,i)=>`${i+1}. ${x.product.label} — ${x.product.name} | Taille : ${x.size} | Couleur : ${x.color} | Quantité : ${x.quantity} | Prix unitaire : ${formatPrice(x.product.price)}${x.embroidery?` | Broderie demandée : ${x.text||'À préciser'}`:''}`).join('\n'),size:'Voir chaque article',color:'Voir chaque article',quantity:cart.reduce((n,x)=>n+x.quantity,0),notes:`Sous-total : ${formatPrice(total)} (hors livraison et broderie). Merci de confirmer les frais et le délai avant validation. Paiement : en espèces à la livraison.`});
+}
+export default function Checkout({cart,customer,setCustomer}){
+ const [error,setError]=useState('');const form=useRef();
+ function submit(e){e.preventDefault();setError('');let invalid='';if(customer.name.trim().length<2)invalid='name';else if(!/^(?:0[5-7]\d{8}|00212[5-7]\d{8}|\+[1-9]\d{7,14})$/.test(customer.phone.replace(/[\s().-]/g,'')))invalid='phone';else if(customer.city.trim().length<2)invalid='city';if(invalid){setError(invalid==='phone'?'Entre un numéro valide, par exemple 0612345678 ou +212612345678.':'Renseigne ton nom et ta ville (au moins 2 caractères).');form.current.elements.namedItem(invalid)?.focus();return}if(!cart.length)return;window.open(checkoutUrl(cart,customer),'_blank','noopener,noreferrer')}
+ function update(field,value){setCustomer(c=>({...c,[field]:value}));setError('')}
+ return <form ref={form} className="checkout-form" onSubmit={submit}><div className="checkout-form-title"><h3>Tes coordonnées</h3><span>3 infos, et on s’occupe du reste.</span></div><label htmlFor="customer-name">Nom complet <span aria-hidden="true">*</span></label><input id="customer-name" name="name" autoComplete="name" required minLength={2} maxLength={80} value={customer.name} onChange={e=>update('name',e.target.value)} placeholder="Ton nom complet"/><label htmlFor="customer-phone">Numéro de téléphone <span aria-hidden="true">*</span></label><input id="customer-phone" name="phone" type="tel" inputMode="tel" autoComplete="tel" required maxLength={25} value={customer.phone} onChange={e=>update('phone',e.target.value)} placeholder="06 ou 07…"/><label htmlFor="customer-city">Ville <span aria-hidden="true">*</span></label><input id="customer-city" name="city" autoComplete="address-level2" required minLength={2} maxLength={80} value={customer.city} onChange={e=>update('city',e.target.value)} placeholder="Ta ville de livraison"/>{error&&<p className="checkout-error" role="alert">{error}</p>}<DeliveryInfo compact/><button type="submit" className="btn dark">Confirmer sur WhatsApp <MessageCircle size={18}/></button><p className="checkout-privacy">Ces informations seront incluses dans ton message WhatsApp pour préparer la commande. Elles ne sont pas enregistrées sur ce site.</p></form>
+}

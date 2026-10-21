@@ -1,4 +1,5 @@
 import {test,expect} from '@playwright/test';
+import {submitCheckout} from './checkoutHelpers';
 test('catalogue, filtres, favoris et commande WhatsApp',async({page})=>{
  await page.goto('/');
  await expect(page.getByRole('heading',{name:'À chacun son empreinte.'})).toBeVisible();
@@ -12,11 +13,11 @@ test('catalogue, filtres, favoris et commande WhatsApp',async({page})=>{
  await dialog.getByRole('button',{name:'XL',exact:true}).click();
  await dialog.getByRole('button',{name:'Beige',exact:true}).click();
  await dialog.getByRole('button',{name:'Augmenter la quantité'}).click();
- const link=dialog.getByRole('link',{name:'Commander sur WhatsApp'});
- const url=new URL(await link.getAttribute('href'));
+ await dialog.getByRole('button',{name:'Commander sur WhatsApp'}).click();
+ const url=await submitCheckout(page,page.getByRole('dialog',{name:'Mon panier'}));
  expect(url.pathname).toBe('/212617571113');
- expect(url.searchParams.get('text')).toContain('Taille souhaitée : XL');
- expect(url.searchParams.get('text')).toContain('Couleur souhaitée : Beige');
+ expect(url.searchParams.get('text')).toContain('Taille : XL');
+ expect(url.searchParams.get('text')).toContain('Couleur : Beige');
  expect(url.searchParams.get('text')).toContain('Quantité : 2');
  await page.keyboard.press('Escape');await expect(dialog).toHaveCount(0);
 });
@@ -58,7 +59,7 @@ test('options dans la fiche, panier persistant et confirmation complète',async(
  await expect(cart.getByText('L · Bordeaux')).toBeVisible();
  await expect(cart.getByText('Broderie demandée : TAMNI')).toBeVisible();
  await cart.getByRole('button',{name:/Augmenter/}).click();
- let u=new URL(await cart.getByRole('link',{name:'Confirmer sur WhatsApp'}).getAttribute('href'));
+ const u=await submitCheckout(page,cart);
  expect(u.searchParams.get('text')).toContain('Quantité : 3');
  expect(u.searchParams.get('text')).toContain('Broderie demandée : TAMNI');
  await page.reload();await page.getByRole('button',{name:'Ouvrir le panier'}).click();
