@@ -49,3 +49,5 @@ Les tests admin simulent l’API GitHub : accès refusé, édition, ajout de pho
 Le hero cinématographique (CSS, sans vidéo ni dépendance externe) est dans `src/CinematicHero.jsx` et `src/cinematic.css`. Il utilise une photo du catalogue en arrière-plan et respecte prefers-reduced-motion. Le logo original fourni dans logo.zip est conservé sans retouche dans `public/brand/tamni-logo.jpeg`. Il apparaît dans l’en-tête, le hero, le pied de page, l’administration et comme favicon.
 
 Le logo de la barre supérieure utilise `public/brand/tamni-logo-transparent.png` (version à fond transparent). Le hero et les autres emplacements gardent le JPEG original.
+
+Les requêtes admin GitHub désactivent le cache. En cas d’avancement concurrent de la branche, une nouvelle tentative est faite uniquement après relecture du catalogue au nouveau commit ; les modifications externes du catalogue restent protégées. Les erreurs GitHub 422 affichent leur cause réelle et ne sont plus toutes classées comme conflit.

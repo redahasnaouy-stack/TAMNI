@@ -17,8 +17,16 @@ export function validateCatalog(value){
 }
 export function photoUrl(p){return p.image?.startsWith('data:')?p.image:`${import.meta.env.BASE_URL}${p.image||`products/${p.id}.jpeg`}`}
 export async function githubRequest(token,path,options={}){
- let response;try{response=await fetch(`https://api.github.com/repos/${repository}/${path}`,{...options,headers:{Accept:'application/vnd.github+json',Authorization:`Bearer ${token}`,'X-GitHub-Api-Version':'2022-11-28',...options.headers}})}catch{throw new Error('Connexion à GitHub impossible. Le changement n’a pas été publié. Vérifie ta connexion et réessaie.')}
- if(!response.ok){if(response.status===401||response.status===403)throw new Error('Accès refusé. Vérifie le jeton, le dépôt TAMNI et la permission Contents : lecture et écriture.');if(response.status===409||response.status===422)throw new Error('Le dépôt a changé. Recharge le catalogue avant de publier.');throw new Error(`GitHub ne peut pas terminer cette opération (${response.status}).`)}
+ let response;try{response=await fetch(`https://api.github.com/repos/${repository}/${path}`,{...options,cache:'no-store',headers:{Accept:'application/vnd.github+json',Authorization:`Bearer ${token}`,'X-GitHub-Api-Version':'2022-11-28',...options.headers}})}catch{throw new Error('Connexion à GitHub impossible. Le changement n’a pas été publié. Vérifie ta connexion et réessaie.')}
+ if(!response.ok){
+  let data={};try{data=await response.json()}catch{}
+  const detail=[data.message,...(Array.isArray(data.errors)?data.errors.map(e=>typeof e==='string'?e:e.message||[e.field,e.code].filter(Boolean).join(': ')):[])].filter(Boolean).join(' · ').replaceAll(token,'[masqué]').slice(0,450);
+  if(response.status===401||response.status===403)throw new Error('Accès refusé. Vérifie le jeton, le dépôt TAMNI et la permission Contents : lecture et écriture.');
+  if(path==='git/refs/heads/main'&&[409,422].includes(response.status)&&/not a fast forward|fast.forward|reference update failed/i.test(detail)){
+   const error=new Error('La branche a été mise à jour pendant l’enregistrement. Réessaie sans fermer le formulaire.');error.code='BRANCH_MOVED';throw error;
+  }
+  throw new Error(`GitHub a refusé l’opération (${response.status}, ${path.split('?')[0]}). ${detail||'Réessaie en conservant le formulaire ouvert.'}`);
+ }
  return response.json();
 }
 export async function loadAdminCatalog(token,ref="main"){
@@ -31,14 +39,19 @@ export async function publishCatalog(token,items,expectedSha){
  validateCatalog(items);
  const content=JSON.stringify(items,null,2)+'\n';
  if(new TextEncoder().encode(content).length>900000)throw new Error('Catalogue trop volumineux : réduis le poids des nouvelles photos. Maximum 900 Ko.');
- const ref=await githubRequest(token,'git/ref/heads/main');
- const current=await loadAdminCatalog(token,ref.object.sha);
- if(current.sha!==expectedSha)throw new Error('Le catalogue a été modifié ailleurs. Recharge-le pour éviter d’écraser les changements.');
- const head=await githubRequest(token,`git/commits/${ref.object.sha}`);
- const post=(path,body)=>githubRequest(token,path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
- const blob=await post('git/blobs',{content,encoding:'utf-8'});
- const tree=await post('git/trees',{base_tree:head.tree.sha,tree:['public/catalog.json','docs/catalog.json'].map(path=>({path,mode:'100644',type:'blob',sha:blob.sha}))});
- const commit=await post('git/commits',{message:'Update TAMNI catalogue from admin',tree:tree.sha,parents:[ref.object.sha]});
- await githubRequest(token,'git/refs/heads/main',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({sha:commit.sha,force:false})});
- return blob.sha;
+ for(let attempt=0;attempt<2;attempt++){
+  const ref=await githubRequest(token,'git/ref/heads/main');
+  const current=await loadAdminCatalog(token,ref.object.sha);
+  if(current.sha!==expectedSha)throw new Error('Le catalogue a été modifié ailleurs. Tes saisies sont conservées dans le formulaire. Recharge le catalogue avant de reprendre la modification.');
+  if(JSON.stringify(current.items)===JSON.stringify(items))return current.sha;
+  const head=await githubRequest(token,`git/commits/${ref.object.sha}`);
+  const post=(path,body)=>githubRequest(token,path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+  const blob=await post('git/blobs',{content,encoding:'utf-8'});
+  const tree=await post('git/trees',{base_tree:head.tree.sha,tree:['public/catalog.json','docs/catalog.json'].map(path=>({path,mode:'100644',type:'blob',sha:blob.sha}))});
+  const commit=await post('git/commits',{message:'Update TAMNI catalogue from admin',tree:tree.sha,parents:[ref.object.sha]});
+  try{
+   await githubRequest(token,'git/refs/heads/main',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({sha:commit.sha,force:false})});
+   return blob.sha;
+  }catch(error){if(error.code!=='BRANCH_MOVED'||attempt===1)throw error}
+ }
 }
