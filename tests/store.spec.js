@@ -37,7 +37,7 @@ test('mobile : aucun débordement, menu et illustrations accessibles',async({pag
  await page.getByRole('button',{name:'Ouvrir le menu'}).click();
  await expect(page.getByRole('link',{name:'L’esprit TAMNI'})).toBeVisible();
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true);
- expect(await page.locator('.garment-art img').evaluateAll(imgs=>imgs.every(i=>i.complete&&i.naturalWidth>0))).toBe(true);
+ await expect.poll(()=>page.locator('.garment-art img').evaluateAll(imgs=>imgs.length>0&&imgs.every(i=>i.complete&&i.naturalWidth>0)),{timeout:15000}).toBe(true);
  await page.getByRole('button',{name:'Ouvrir le menu'}).click();
  await page.screenshot({path:'/tmp/tamni-mobile.png',fullPage:true});
 });
