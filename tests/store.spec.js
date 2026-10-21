@@ -1,0 +1,41 @@
+import {test,expect} from '@playwright/test';
+test('catalogue, filtres, favoris et commande WhatsApp',async({page})=>{
+ await page.goto('/');
+ await expect(page.getByRole('heading',{name:'Pas juste un look. Une expression.'})).toBeVisible();
+ await expect(page.locator('article.product')).toHaveCount(5);
+ await page.getByRole('button',{name:/T-shirts/}).click();
+ await expect(page.locator('article.product')).toHaveCount(1);
+ await page.getByRole('button',{name:'Ajouter aux favoris Palestine — Heritage'}).click();
+ await page.getByRole('button',{name:'Choisir ma pièce'}).click();
+ const dialog=page.getByRole('dialog');
+ await expect(dialog.getByRole('button',{name:'Choisis ta taille pour continuer'})).toBeDisabled();
+ await dialog.getByRole('button',{name:'XL',exact:true}).click();
+ await dialog.getByRole('button',{name:'Beige',exact:true}).click();
+ await dialog.getByRole('button',{name:'Augmenter la quantité'}).click();
+ const link=dialog.getByRole('link',{name:'Commander sur WhatsApp'});
+ const url=new URL(await link.getAttribute('href'));
+ expect(url.pathname).toBe('/212617571113');
+ expect(url.searchParams.get('text')).toContain('Taille souhaitée : XL');
+ expect(url.searchParams.get('text')).toContain('Couleur souhaitée : Beige');
+ expect(url.searchParams.get('text')).toContain('Quantité : 2');
+ await page.keyboard.press('Escape');await expect(dialog).toHaveCount(0);
+});
+test('personnalisation : fichier obligatoire, aperçu et détails du projet',async({page})=>{
+ await page.goto('/');await page.getByRole('button',{name:'Parlons de ton projet'}).click();
+ await expect(page.getByRole('alert')).toContainText('Ajoute ton design');
+ await page.locator('#design-upload').setInputFiles({name:'mon-design.png',mimeType:'image/png',buffer:Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aoccAAAAASUVORK5CYII=','base64')});
+ await expect(page.getByAltText('Aperçu de votre design')).toBeVisible();
+ await page.getByLabel('Le support').selectOption('Casquette');
+ await expect(page.getByLabel('La taille souhaitée')).toHaveValue('Unique');
+ await page.getByPlaceholder('Emplacement du print, quantité, couleur…').fill('Print devant');
+ await page.evaluate(()=>{window.open=(url)=>{window.__orderUrl=url}});await page.getByRole('button',{name:'Parlons de ton projet'}).click();
+ const u=new URL(await page.evaluate(()=>window.__orderUrl));expect(u.searchParams.get('text')).toContain('mon-design.png');expect(u.searchParams.get('text')).toContain('Casquette');expect(u.searchParams.get('text')).toContain('Print devant');
+});
+test('mobile : aucun débordement, menu et illustrations accessibles',async({page})=>{
+ await page.setViewportSize({width:390,height:844});await page.goto('/');
+ await page.getByRole('button',{name:'Ouvrir le menu'}).click();
+ await expect(page.getByRole('link',{name:'L’esprit TAMNI'})).toBeVisible();
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true);
+ expect(await page.locator('.garment-art img').evaluateAll(imgs=>imgs.every(i=>i.complete&&i.naturalWidth>0))).toBe(true);
+ await page.screenshot({path:'/tmp/tamni-mobile.png',fullPage:true});
+});
