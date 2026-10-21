@@ -2,6 +2,7 @@ import {expect} from '@playwright/test';
 import fs from 'node:fs';
 export const catalog=JSON.parse(fs.readFileSync('public/catalog.json','utf8'));
 export async function mockGithub(page,{denied=false,conflict=false,denyWrite=false,branchRace=false,validationError=false}={}){
+ await page.route('**/.netlify/functions/tamni-api?**',route=>{const r=new URL(route.request().url()).searchParams.get('resource');return route.fulfill({json:r==='session'?{user:{login:'redahasnaouy-stack',name:'TAMNI',role:'owner'}}:r==='orders'?{orders:[]}:r==='visits'?{visits:[]}:{members:[{login:'redahasnaouy-stack',role:'owner'}]}})});
  let saved=null,committed=false,liveCatalog=structuredClone(catalog),patchAttempts=0;
  await page.route('https://api.github.com/repos/redahasnaouy-stack/TAMNI/**',async route=>{
   const req=route.request(),path=new URL(req.url()).pathname;

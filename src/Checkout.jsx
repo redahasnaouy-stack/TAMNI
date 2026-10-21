@@ -3,11 +3,12 @@ import {MessageCircle,Truck,CreditCard} from 'lucide-react';
 import {formatPrice} from './catalogStore';
 import {whatsappNumber} from './catalog';
 import './checkout.css';
+import {recordCheckout} from './managementApi';
 export function DeliveryInfo({compact=false}){
  const content=<><div><Truck size={21}/><h3>Livraison au Maroc</h3><p>Les frais et le délai sont confirmés sur WhatsApp selon ta ville, avant la validation de ta commande.</p></div><div><CreditCard size={21}/><h3>Paiement à la livraison</h3><p>Règle ta commande en espèces au moment de recevoir ton colis. Aucun paiement en ligne ni avance n’est demandé.</p></div></>;
  return compact?<details className="checkout-delivery"><summary>Livraison et paiement : ce qu’il faut savoir</summary><div>{content}</div></details>:<section id="livraison" className="delivery-section"><div><span className="eyebrow">AVANT DE COMMANDER</span><h2>De notre atelier<br/>jusqu’à toi.</h2></div>{content}</section>
 }
-export function checkoutUrl(cart,customer){
+export function checkoutUrl(cart,customer,reference){
  const total=cart.reduce((n,x)=>n+x.product.price*x.quantity,0);
  const productLines=cart.map((x,i)=>[
   `${i+1}. ${x.product.label} — ${x.product.name}`,
@@ -15,7 +16,7 @@ export function checkoutUrl(cart,customer){
   ...(x.embroidery?[`Broderie demandée : ${x.text?.trim()||'À préciser'}`]:[])
  ].join('\n')).join('\n\n');
  const text=[
-  '*Commande TAMNI*',
+  `*Commande TAMNI*${reference?`\nRéf : ${reference}`:''}`,
   productLines,
   `Sous-total : ${formatPrice(total)} (hors livraison${cart.some(x=>x.embroidery)?' et broderie':''})\nPaiement : en espèces à la livraison`,
   `*Coordonnées*\nClient : ${customer.name.trim()}\nTéléphone : ${customer.phone.trim()}\nVille : ${customer.city.trim()}`
@@ -23,8 +24,12 @@ export function checkoutUrl(cart,customer){
  return `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(text)}`;
 }
 export default function Checkout({cart,customer,setCustomer}){
- const [error,setError]=useState('');const form=useRef();
- function submit(e){e.preventDefault();setError('');let invalid='';if(customer.name.trim().length<2)invalid='name';else if(!/^(?:0[5-7]\d{8}|00212[5-7]\d{8}|\+[1-9]\d{7,14})$/.test(customer.phone.replace(/[\s().-]/g,'')))invalid='phone';else if(customer.city.trim().length<2)invalid='city';if(invalid){setError(invalid==='phone'?'Entre un numéro valide, par exemple 0612345678 ou +212612345678.':'Renseigne ton nom et ta ville (au moins 2 caractères).');form.current.elements.namedItem(invalid)?.focus();return}if(!cart.length)return;window.open(checkoutUrl(cart,customer),'_blank','noopener,noreferrer')}
+ const [error,setError]=useState(''),[saving,setSaving]=useState(false);const form=useRef(),attempt=useRef({signature:'',id:''});
+ async function submit(e){e.preventDefault();setError('');let invalid='';if(customer.name.trim().length<2)invalid='name';else if(!/^(?:0[5-7]\d{8}|00212[5-7]\d{8}|\+[1-9]\d{7,14})$/.test(customer.phone.replace(/[\s().-]/g,'')))invalid='phone';else if(customer.city.trim().length<2)invalid='city';if(invalid){setError(invalid==='phone'?'Entre un numéro valide, par exemple 0612345678 ou +212612345678.':'Renseigne ton nom et ta ville (au moins 2 caractères).');form.current.elements.namedItem(invalid)?.focus();return}if(!cart.length||saving)return;
+ const signature=JSON.stringify({cart:cart.map(x=>[x.product.id,x.size,x.color,x.quantity,x.embroidery,x.text]),customer});if(attempt.current.signature!==signature)attempt.current={signature,id:crypto.randomUUID()};
+ const popup=window.open('about:blank','_blank');if(popup)popup.opener=null;setSaving(true);let reference;
+ try{const result=await recordCheckout(cart,customer,attempt.current.id);reference=result.reference;if(result.total!==cart.reduce((n,x)=>n+x.product.price*x.quantity,0)){popup?.close();setError('Les prix ont changé. Actualise le catalogue avant de confirmer.');return}}catch{setError('Le suivi en ligne est indisponible. Confirme ton message WhatsApp ; notre équipe enregistrera la commande.')}finally{setSaving(false)}
+ const url=checkoutUrl(cart,customer,reference);if(popup)popup.location.href=url;else window.location.assign(url)}
  function update(field,value){setCustomer(c=>({...c,[field]:value}));setError('')}
- return <form ref={form} className="checkout-form" onSubmit={submit}><div className="checkout-form-title"><h3>Tes coordonnées</h3><span>3 infos, et on s’occupe du reste.</span></div><label htmlFor="customer-name">Nom complet <span aria-hidden="true">*</span></label><input id="customer-name" name="name" autoComplete="name" required minLength={2} maxLength={80} value={customer.name} onChange={e=>update('name',e.target.value)} placeholder="Ton nom complet"/><label htmlFor="customer-phone">Numéro de téléphone <span aria-hidden="true">*</span></label><input id="customer-phone" name="phone" type="tel" inputMode="tel" autoComplete="tel" required maxLength={25} value={customer.phone} onChange={e=>update('phone',e.target.value)} placeholder="06 ou 07…"/><label htmlFor="customer-city">Ville <span aria-hidden="true">*</span></label><input id="customer-city" name="city" autoComplete="address-level2" required minLength={2} maxLength={80} value={customer.city} onChange={e=>update('city',e.target.value)} placeholder="Ta ville de livraison"/>{error&&<p className="checkout-error" role="alert">{error}</p>}<DeliveryInfo compact/><button type="submit" className="btn dark">Confirmer sur WhatsApp <MessageCircle size={18}/></button><p className="checkout-privacy">Ces informations seront incluses dans ton message WhatsApp pour préparer la commande. Elles ne sont pas enregistrées sur ce site.</p></form>
+ return <form ref={form} className="checkout-form" onSubmit={submit}><div className="checkout-form-title"><h3>Tes coordonnées</h3><span>3 infos, et on s’occupe du reste.</span></div><label htmlFor="customer-name">Nom complet <span aria-hidden="true">*</span></label><input id="customer-name" name="name" autoComplete="name" required minLength={2} maxLength={80} value={customer.name} onChange={e=>update('name',e.target.value)} placeholder="Ton nom complet"/><label htmlFor="customer-phone">Numéro de téléphone <span aria-hidden="true">*</span></label><input id="customer-phone" name="phone" type="tel" inputMode="tel" autoComplete="tel" required maxLength={25} value={customer.phone} onChange={e=>update('phone',e.target.value)} placeholder="06 ou 07…"/><label htmlFor="customer-city">Ville <span aria-hidden="true">*</span></label><input id="customer-city" name="city" autoComplete="address-level2" required minLength={2} maxLength={80} value={customer.city} onChange={e=>update('city',e.target.value)} placeholder="Ta ville de livraison"/>{error&&<p className="checkout-error" role="alert">{error}</p>}<DeliveryInfo compact/><button type="submit" className="btn dark" disabled={saving}>{saving?"Préparation de la commande…":"Confirmer sur WhatsApp"} <MessageCircle size={18}/></button><p className="checkout-privacy">Tes coordonnées et ton panier sont enregistrés dans la gestion privée de TAMNI pour préparer la commande, puis inclus dans ton message WhatsApp. Ils ne sont pas publiés sur le site.</p></form>
 }

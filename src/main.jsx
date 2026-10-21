@@ -13,12 +13,15 @@ import {validateCatalog,formatPrice,photoUrl} from './catalogStore';
 import './admin.css';
 import './luxury.css';
 import './dashboard.css';
+import './dashboard-maison.css';
+import {trackVisit} from './managementApi';
 
 function Garment({product,hero=false}) {return <div className={`garment-art ${hero?'hero-garment':''}`}><img src={photoUrl(product)} alt={`${product.label} ${product.name}`} /></div>}
 const colorChoices=[['Noir','#151515'],['Blanc','#f7f4eb'],['Bordeaux','#833342'],['Vert olive','#737c45'],['Beige','#c5b68d'],['Marron','#725443']];
 const descriptions={palestine:'Un imprimé Palestine au style timbre vintage. Une pièce qui porte une histoire.',darwish:'Un hommage à Mahmoud Darwish : poésie arabe et composition rouge sur marron.',angel:'Un imprimé Angel rouge, entre lettrage gothique et esprit streetwear.',anime:'Un hoodie anime avec un design noir et blanc à l’avant et au dos.'};
 function WhatsApp({size=17}) {return <MessageCircle size={size}/>}
 function App(){
+ useEffect(()=>{trackVisit()},[]);
  const [products,setProducts]=useState(initialCatalog.filter(p=>p.active!==false));
  useEffect(()=>{const controller=new AbortController();fetch(`${import.meta.env.BASE_URL}catalog.json`,{cache:'no-store',signal:controller.signal}).then(r=>{if(!r.ok)throw new Error('catalog');return r.json()}).then(v=>setProducts(validateCatalog(v).filter(p=>p.active!==false))).catch(()=>{});return()=>controller.abort()},[]);
  const [tab,setTab]=useState(()=>{const t=new URLSearchParams(location.search).get('tab');return ['tshirts','hoodies','caps'].includes(t)?t:'all'}),[selected,setSelected]=useState(null),[size,setSize]=useState(''),[color,setColor]=useState('Noir'),[quantity,setQuantity]=useState(1),[sort,setSort]=useState('selection'),[menu,setMenu]=useState(false),[favorites,setFavorites]=useState([]),[onlyFavorites,setOnlyFavorites]=useState(false);

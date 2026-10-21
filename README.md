@@ -66,7 +66,7 @@ Le formulaire de design affiche la légende exacte (support, taille, couleur et 
 
 ## Thème TAMNI Maison
 
-Le thème global est défini dans `src/luxury.css`, chargé en dernier. Les variables de couleur (charbon, ivoire, champagne) y sont centralisées. Le hero conserve le logo argenté original et le catalogue conserve les photos originales sans recadrage. Styles coordonnés pour les fiches, le panier, les formulaires, le partage de design et l’administration.
+Le thème global est défini dans `src/luxury.css`, chargé après les styles historiques. Les variables de couleur (charbon, ivoire, champagne) y sont centralisées ; `src/dashboard-maison.css` décline cette identité dans le dashboard. Le hero conserve le logo argenté original et le catalogue conserve les photos originales sans recadrage. Styles coordonnés pour les fiches, le panier, les formulaires, le partage de design et l’administration.
 
 ## Netlify
 
@@ -76,6 +76,15 @@ Préférer l’intégration GitHub à un dépôt manuel de ZIP : les publication
 
 ## Dashboard d’administration
 
-Après connexion, l’administration affiche un dashboard RTL arabe inspiré de la référence fournie : sidebar à droite, interface claire, cartes d’indicateurs réels et répartition des catégories. Les métriques sont calculées depuis le catalogue (total, publiés, masqués, prix moyen), sans chiffres de ventes ou de visites inventés. Le menu Produits conserve l’édition existante et ajoute recherche et filtre de visibilité. Sur mobile, le menu est repliable. Les pages Boutique et Paramètres présentent les liens et informations actuelles, sans prétendre les modifier.
+Après connexion, l’administration affiche un dashboard RTL arabe inspiré des captures fournies, avec le thème charbon, ivoire et champagne de la boutique. Le menu Produits conserve l’édition GitHub avec recherche et filtre de visibilité. Le menu latéral est repliable sur mobile.
 
-Les commandes, le chiffre d’affaires et les visites ne sont pas synchronisés : ces espaces l’indiquent explicitement. Les commandes restent confirmées via WhatsApp ; une base privée et une intégration sont nécessaires pour les suivre automatiquement. Aucune donnée de client n’est ajoutée au dépôt public. L’authentification et la publication GitHub restent identiques.
+Sur Netlify, `netlify/functions/tamni-api.mjs` enregistre les commandes et les visites dans le store privé Netlify Blobs `tamni-private-management`. Aucun nom, téléphone ou ville client ne va dans le dépôt public. Le panier enregistre les choix avant d’ouvrir WhatsApp et ajoute une référence courte au message ; une commande enregistrée ne prouve pas que le message a été envoyé ni que la vente est confirmée. En cas d’indisponibilité du backend, WhatsApp reste utilisable avec un avertissement, et l’équipe peut saisir la commande manuellement. Les variantes et les prix sont validés côté serveur depuis le catalogue du déploiement ; les changements de prix nécessitent donc la fin du déploiement Netlify.
+
+- Commandes : recherche, filtres, confirmation, paiement, expédition, détail, frais de livraison, impression, saisie manuelle et export CSV.
+- Statistiques : période, valeurs maximale/moyenne/minimale des commandes, ventes réellement marquées payées (hors commandes annulées), courbes et sessions/pages par appareil. Aucun historique WhatsApp antérieur n’est importé. Les sessions sont comptées par jour et par onglet, sans IP ni identifiant de session brut dans le store.
+- Clients : regroupement des commandes par téléphone et recherche.
+- Compte et équipe : identité GitHub vérifiée côté serveur. Le propriétaire `redahasnaouy-stack` peut autoriser un compte GitHub en lecture seule ou en gestion des commandes. Aucune invitation externe n’est envoyée. Modifier les produits nécessite toujours les permissions GitHub du dépôt. Chaque requête privée vérifie le jeton GitHub, sans le conserver. Les modifications concurrentes de commandes utilisent les révisions du stockage et renvoient un conflit plutôt que d’écraser un changement.
+
+Netlify injecte automatiquement le contexte Blobs dans les Functions modernes. Aucun secret Blobs n’est à ajouter au navigateur. Publier depuis GitHub via Netlify (ou Trigger deploy si nécessaire), puis vérifier `/.netlify/functions/tamni-api?resource=health` : la réponse attendue est `{"ready":true}`. Un ZIP statique ou GitHub Pages seul ne déploie pas ces fonctions ; seuls le catalogue et la commande WhatsApp de secours y fonctionnent. Les données privées restent attachées au site Netlify et ne sont pas incluses dans les archives de build. Ne pas exporter le CSV de clients vers le dépôt public.
+
+Validation : `npm run test:server` vérifie authentification, contrôle des prix et variantes, idempotence, conflits, rôles et comptage de visites avec un stockage simulé ; `npm test` teste les parcours navigateur et les API simulées. Aucun vrai client ni jeton utilisateur n’a été utilisé dans ces tests.
