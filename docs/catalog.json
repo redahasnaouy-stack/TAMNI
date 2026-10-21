@@ -1,0 +1,142 @@
+[
+  {
+    "id": "palestine-tee",
+    "price": 90,
+    "name": "Palestine — Heritage",
+    "type": "tshirts",
+    "label": "T-shirt oversize",
+    "design": "palestine",
+    "color": "#202020",
+    "tag": "LA SÉLECTION TAMNI",
+    "image": "products/palestine-tee.jpeg",
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "colors": [
+      "Noir",
+      "Blanc",
+      "Bordeaux",
+      "Vert olive",
+      "Beige",
+      "Marron"
+    ],
+    "active": true
+  },
+  {
+    "id": "darwish",
+    "price": 120,
+    "name": "Darwish — Poésie libre",
+    "type": "hoodies",
+    "label": "Hoodie oversize",
+    "design": "darwish",
+    "color": "#493125",
+    "tag": "COUP DE CŒUR",
+    "image": "products/darwish.jpeg",
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "colors": [
+      "Noir",
+      "Blanc",
+      "Bordeaux",
+      "Vert olive",
+      "Beige",
+      "Marron"
+    ],
+    "active": true
+  },
+  {
+    "id": "angel",
+    "price": 110,
+    "name": "Angel — After dark",
+    "type": "hoodies",
+    "label": "Hoodie oversize",
+    "design": "angel",
+    "color": "#222222",
+    "tag": "",
+    "image": "products/angel.jpeg",
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "colors": [
+      "Noir",
+      "Blanc",
+      "Bordeaux",
+      "Vert olive",
+      "Beige",
+      "Marron"
+    ],
+    "active": true
+  },
+  {
+    "id": "palestine-hoodie",
+    "price": 120,
+    "name": "Palestine — Heritage",
+    "type": "hoodies",
+    "label": "Hoodie oversize",
+    "design": "palestine",
+    "color": "#242424",
+    "tag": "",
+    "image": "products/palestine-hoodie.jpeg",
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "colors": [
+      "Noir",
+      "Blanc",
+      "Bordeaux",
+      "Vert olive",
+      "Beige",
+      "Marron"
+    ],
+    "active": true
+  },
+  {
+    "id": "anime",
+    "price": 115,
+    "name": "Anime — Silent power",
+    "type": "hoodies",
+    "label": "Hoodie oversize",
+    "design": "anime",
+    "color": "#202020",
+    "tag": "ANIME CULTURE",
+    "image": "products/anime.jpeg",
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "colors": [
+      "Noir",
+      "Blanc",
+      "Bordeaux",
+      "Vert olive",
+      "Beige",
+      "Marron"
+    ],
+    "active": true
+  }
+]
