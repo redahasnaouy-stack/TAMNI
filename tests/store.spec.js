@@ -1,12 +1,12 @@
 import {test,expect} from '@playwright/test';
 test('catalogue, filtres, favoris et commande WhatsApp',async({page})=>{
  await page.goto('/');
- await expect(page.getByRole('heading',{name:'Pas juste un look. Une expression.'})).toBeVisible();
+ await expect(page.getByRole('heading',{name:'La collection TAMNI.'})).toBeVisible();
  await expect(page.locator('article.product')).toHaveCount(5);
  await page.getByRole('button',{name:/T-shirts/}).click();
  await expect(page.locator('article.product')).toHaveCount(1);
  await page.getByRole('button',{name:'Ajouter aux favoris Palestine — Heritage'}).click();
- await page.getByRole('button',{name:'Choisir ma pièce'}).click();
+ await page.getByRole('button',{name:'Choisir Palestine — Heritage',exact:true}).click();
  const dialog=page.getByRole('dialog');
  await expect(dialog.getByRole('button',{name:'Choisis ta taille pour continuer'})).toBeDisabled();
  await dialog.getByRole('button',{name:'XL',exact:true}).click();
@@ -37,5 +37,36 @@ test('mobile : aucun débordement, menu et illustrations accessibles',async({pag
  await expect(page.getByRole('link',{name:'L’esprit TAMNI'})).toBeVisible();
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true);
  expect(await page.locator('.garment-art img').evaluateAll(imgs=>imgs.every(i=>i.complete&&i.naturalWidth>0))).toBe(true);
+ await page.getByRole('button',{name:'Ouvrir le menu'}).click();
  await page.screenshot({path:'/tmp/tamni-mobile.png',fullPage:true});
+});
+
+test('options sous les produits, panier persistant et confirmation complète',async({page})=>{
+ await page.goto('/');
+ const first=page.locator('article.product').first();
+ await expect(first.getByRole('button',{name:'CHOISIS TA TAILLE'})).toBeDisabled();
+ await first.getByRole('button',{name:'L',exact:true}).click();
+ await first.getByRole('button',{name:'Bordeaux',exact:true}).click();
+ await first.getByRole('button',{name:/DEMANDER UNE BRODERIE/}).click();
+ await first.getByLabel('Texte de la broderie').fill('TAMNI');
+ await first.getByRole('button',{name:'AJOUTER AU PANIER'}).click();
+ const cart=page.getByRole('dialog',{name:'Mon panier'});
+ await expect(cart.getByText('L · Bordeaux')).toBeVisible();
+ await expect(cart.getByText('Broderie demandée : TAMNI')).toBeVisible();
+ await cart.getByRole('button',{name:/Augmenter/}).click();
+ let u=new URL(await cart.getByRole('link',{name:'Confirmer sur WhatsApp'}).getAttribute('href'));
+ expect(u.searchParams.get('text')).toContain('Quantité : 2');
+ expect(u.searchParams.get('text')).toContain('Broderie demandée : TAMNI');
+ await page.reload();await page.getByRole('button',{name:'Ouvrir le panier'}).click();
+ await expect(cart.getByText('L · Bordeaux')).toBeVisible();
+ await cart.getByRole('button',{name:/Retirer/}).click();
+ await expect(cart.getByText('Ton histoire commence avec une pièce.')).toBeVisible();
+});
+test('catégorie partageable et grille desktop de quatre colonnes',async({page})=>{
+ await page.setViewportSize({width:1366,height:900});await page.goto('/?tab=hoodies');
+ await expect(page.locator('article.product')).toHaveCount(4);
+ expect(await page.locator('.products').evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').length)).toBe(4);
+ await page.getByRole('button',{name:/Tout le drop/}).click();
+ await expect(page).toHaveURL(/tab=all/);
+ await page.screenshot({path:'/tmp/tamni-shop-desktop.png',fullPage:true});
 });

@@ -1,6 +1,6 @@
 # TAMNI — Wear your story
 
-Boutique streetwear React + Vite, en français, adaptée aux mobiles. Catalogue, favoris, sélection de taille/couleur/quantité, commande WhatsApp et personnalisation avec aperçu de fichier.
+Boutique streetwear React + Vite, en français, adaptée aux mobiles. Catalogue en grille verte de quatre colonnes sur ordinateur, favoris, choix directs de couleur/taille, panier persistant et confirmation WhatsApp, personnalisation avec aperçu de fichier.
 
 ## Développement
 
@@ -21,6 +21,7 @@ npm run dev -- --port 5173
 - Catalogue : `src/catalog.js` ; photos : `public/products/`.
 - WhatsApp : +212 617 571 113 ; Instagram : @tamni_streetwear.
 - Les cinq photos JPEG originales fournies par le propriétaire sont utilisées sans retouche dans le catalogue et la bannière.
+- Le panier conserve les choix sur cet appareil. Les demandes de broderie et leur supplément sont soumis à confirmation. Les couleurs et tailles sont des souhaits, sans recoloration des photos originales.
 - Aucun prix ni stock réel n'a été fourni. Les tailles et couleurs sont donc des préférences à confirmer, pas un inventaire garanti. Ajouter les disponibilités réelles avant la mise en vente définitive.
 - Les fichiers personnalisés restent dans le navigateur. Le lien WhatsApp transmet les détails et le nom du fichier ; le client doit joindre le fichier manuellement à la conversation. Instagram ouvre le profil pour un envoi manuel.
 - Aucune base de données, aucun paiement ni téléversement serveur n'est configuré. Les commandes sont confirmées directement par l'équipe.
