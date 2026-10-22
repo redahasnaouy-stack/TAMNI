@@ -97,4 +97,4 @@ Dans le dialogue d’impression, utiliser le papier 100 × 60 mm, l’échelle 1
 
 ## Choix des catalogues
 
-« Découvrir la collection » et le menu Shop mènent à trois cartes au thème TAMNI : T-shirts, Hoodies et T-shirts & Hoodies. Chaque carte ouvre un nouvel onglet via un lien natif (`target="_blank"`, `rel="noopener noreferrer"`) vers le catalogue filtré, sans réafficher le hero. Les paramètres `?tab=tshirts`, `?tab=hoodies` et `?tab=all` restent partageables, y compris sur GitHub Pages. Les images proviennent du catalogue actif ; les tailles et couleurs restent dans les fiches produit.
+« Découvrir la collection » et le menu Shop mènent à trois cartes au thème TAMNI : T-shirts, Hoodies et T-shirts & Hoodies. Chaque carte ouvre le catalogue filtré dans le même onglet via un lien natif, avec retour possible par le bouton précédent du navigateur, sans réafficher le hero. Les paramètres `?tab=tshirts`, `?tab=hoodies` et `?tab=all` restent partageables, y compris sur GitHub Pages. Les images proviennent du catalogue actif ; les tailles et couleurs restent dans les fiches produit.
