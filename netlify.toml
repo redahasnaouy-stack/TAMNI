@@ -18,3 +18,8 @@
 [functions]
   directory = "netlify/functions"
   node_bundler = "esbuild"
+
+[[headers]]
+  for = "/categories.json"
+  [headers.values]
+    Cache-Control = "no-store"

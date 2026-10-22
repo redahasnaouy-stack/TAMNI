@@ -18,3 +18,5 @@
 .catalogue-copy>span{display:flex;justify-content:space-between;align-items:center;gap:15px;color:var(--champagne,#d0bc8e);font-size:11px;border-top:1px solid #d0bc8e30;padding-top:18px}
 @media(max-width:800px){.catalogues-section{padding:45px 5%}.catalogues-grid{grid-template-columns:1fr;gap:22px}.catalogue-visual{height:275px}.catalogue-copy{padding:22px}.catalogue-copy p{margin-bottom:18px}}
 @media(prefers-reduced-motion:reduce){.catalogue-card,.catalogue-visual img{transition:none}.catalogue-card:hover,.catalogue-card:hover img{transform:none}}
+
+.catalogue-placeholder{font-size:40px;letter-spacing:5px;color:#66664f}

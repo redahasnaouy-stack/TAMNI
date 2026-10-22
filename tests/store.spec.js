@@ -4,7 +4,7 @@ test('catalogue, filtres, favoris et commande WhatsApp',async({page})=>{
  await page.goto('/');
  await expect(page.getByRole('heading',{name:'À chacun son empreinte.'})).toBeVisible();
  await expect(page.locator('article.product')).toHaveCount(5);
- await page.getByRole('button',{name:/T-shirts/}).click();
+ await page.getByRole('button',{name:/^T-shirts\d/}).click();
  await expect(page.locator('article.product')).toHaveCount(1);
  await page.getByRole('button',{name:'Ajouter aux favoris Palestine — Heritage'}).click();
  await page.getByRole('button',{name:'Choisir Palestine — Heritage',exact:true}).click();
@@ -71,7 +71,7 @@ test('catégorie partageable et grille desktop de trois colonnes',async({page})=
  await page.setViewportSize({width:1366,height:900});await page.goto('/?tab=hoodies');
  await expect(page.locator('article.product')).toHaveCount(4);
  expect(await page.locator('.products').evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').length)).toBe(3);
- await page.getByRole('button',{name:/Tout le drop/}).click();
+ await page.getByRole('button',{name:/T-shirts & Hoodies/}).click();
  await expect(page).toHaveURL(/tab=all/);
  await page.screenshot({path:'/tmp/tamni-shop-desktop.png',fullPage:true});
 });

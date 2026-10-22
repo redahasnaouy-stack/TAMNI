@@ -97,4 +97,12 @@ Dans le dialogue d’impression, utiliser le papier 100 × 60 mm, l’échelle 1
 
 ## Choix des catalogues
 
-« Découvrir la collection » et le menu Shop mènent à trois cartes au thème TAMNI : T-shirts, Hoodies et T-shirts & Hoodies. Chaque carte ouvre le catalogue filtré dans le même onglet via un lien natif, avec retour possible par le bouton précédent du navigateur, sans réafficher le hero. Les paramètres `?tab=tshirts`, `?tab=hoodies` et `?tab=all` restent partageables, y compris sur GitHub Pages. Les images proviennent du catalogue actif ; les tailles et couleurs restent dans les fiches produit.
+« Découvrir la collection » et le menu Shop mènent à des cartes au thème TAMNI configurables dans l’administration (initialement T-shirts, Hoodies et T-shirts & Hoodies). Chaque carte ouvre le catalogue filtré dans le même onglet via un lien natif, avec retour possible par le bouton précédent du navigateur, sans réafficher le hero. Les paramètres `?tab=tshirts`, `?tab=hoodies` et `?tab=all` restent partageables, y compris sur GitHub Pages. Les images proviennent du catalogue actif ; les tailles et couleurs restent dans les fiches produit.
+
+## Gestion des catégories
+
+Dans `/#admin` → **الفئات**, ajouter une catégorie ou modifier son nom, sa description et sa photo, puis « Enregistrer et publier la catégorie ». Les identifiants restent stables : renommer une catégorie conserve ses produits et ses liens. Le catalogue complet peut être renommé et recevoir sa propre image, mais ne constitue pas une catégorie attribuable à un produit.
+
+La fiche produit propose les catégories publiées : sélectionner la nouvelle catégorie pour y ranger une pièce. Les cartes de la boutique, titres des catalogues, filtres et graphique de répartition utilisent ces données. Sans image personnalisée, une photo des produits sert de couverture (ou un emplacement TAMNI pour une catégorie vide). Les catalogues s’ouvrent dans le même onglet.
+
+Les catégories sont enregistrées séparément dans `public/categories.json` et `docs/categories.json`, en un commit atomique GitHub. Chaque fichier dispose de sa vérification de révision ; un conflit conserve le formulaire, sans écraser une modification externe. Les changements de catégories ne réécrivent pas les produits. La boutique recharge les deux fichiers sans cache après déploiement Netlify. Limites : 30 catégories, photos JPG/PNG/WEBP de 450 Ko maximum, fichier total de 900 Ko maximum ; les photos téléversées sont publiques comme celles des produits. Aucune donnée privée de commande n’y est stockée.

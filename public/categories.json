@@ -1,0 +1,5 @@
+[
+  {"id":"tshirts","name":"T-shirts","description":"Les imprimés qui parlent pour toi.","image":"products/palestine-tee.jpeg"},
+  {"id":"hoodies","name":"Hoodies","description":"Du caractère, jusque dans les détails.","image":"products/darwish.jpeg"},
+  {"id":"all","name":"T-shirts & Hoodies","description":"Toutes tes pièces, dans un seul catalogue.","image":"","group":true}
+]

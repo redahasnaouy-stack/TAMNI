@@ -6,7 +6,7 @@ export function validateCatalog(value){
  for(const p of value){
   if(!p||typeof p.id!=='string'||!/^[a-z0-9-]{1,80}$/.test(p.id)||ids.has(p.id))throw new Error('Identifiant produit invalide ou dupliqué.');ids.add(p.id);
   if(typeof p.name!=='string'||!p.name.trim()||p.name.length>140)throw new Error('Nom produit obligatoire (140 caractères maximum).');
-  if(!['tshirts','hoodies','caps'].includes(p.type))throw new Error('Catégorie invalide.');
+  if(typeof p.type!=='string'||!/^[a-z0-9-]{1,80}$/.test(p.type)||p.type==='all')throw new Error('Catégorie invalide.');
   if(typeof p.price!=='number'||!Number.isFinite(p.price)||p.price<=0||p.price>100000)throw new Error('Le prix doit être compris entre 0,01 et 100 000 DH.');
   if(!Array.isArray(p.sizes)||!p.sizes.length||p.sizes.some(s=>typeof s!=='string'||s.length>15))throw new Error('Sélectionne au moins une taille.');
   if(!Array.isArray(p.colors)||!p.colors.length||p.colors.some(c=>typeof c!=='string'||c.length>30))throw new Error('Sélectionne au moins une couleur.');
@@ -29,26 +29,47 @@ export async function githubRequest(token,path,options={}){
  }
  return response.json();
 }
-export async function loadAdminCatalog(token,ref="main"){
- const file=await githubRequest(token,`contents/public/catalog.json?ref=${encodeURIComponent(ref)}`);
- if(!file.content)throw new Error('Catalogue trop volumineux pour cette méthode de lecture.');
- const bytes=Uint8Array.from(atob(file.content.replace(/\s/g,'')),c=>c.charCodeAt(0));
- return {items:validateCatalog(JSON.parse(new TextDecoder().decode(bytes))),sha:file.sha};
+export function validateCategories(value){
+ if(!Array.isArray(value)||!value.length||value.length>30)throw new Error('Prévois entre 1 et 30 catégories.');
+ const ids=new Set();
+ for(const c of value){
+  if(!c||typeof c.id!=='string'||!/^[a-z0-9-]{1,80}$/.test(c.id)||ids.has(c.id))throw new Error('Identifiant catégorie invalide ou dupliqué.');ids.add(c.id);
+  if(typeof c.name!=='string'||!c.name.trim()||c.name.length>80)throw new Error('Nom de catégorie obligatoire (80 caractères maximum).');
+  if(c.description!=null&&(typeof c.description!=='string'||c.description.length>240))throw new Error('Description de catégorie trop longue.');
+  if((c.group!==undefined&&typeof c.group!=='boolean')||(c.id==='all'&&!c.group)||(c.group&&c.id!=='all'))throw new Error('Le catalogue complet doit garder son identifiant all.');
+  if(c.image!=null&&(typeof c.image!=='string'||(c.image&&!(/^products\/[a-zA-Z0-9._-]+$/.test(c.image)||/^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+/=]+$/.test(c.image)))))throw new Error('Photo de catégorie invalide.');
+ }
+ return value;
 }
-export async function publishCatalog(token,items,expectedSha){
- validateCatalog(items);
+export function productCategories(categories,products=[]){
+ const list=categories.filter(c=>!c.group);const known=new Set(list.map(c=>c.id));
+ for(const p of products)if(!known.has(p.type)){list.push({id:p.type,name:{tshirts:'T-shirts',hoodies:'Hoodies',caps:'Casquettes'}[p.type]||p.type});known.add(p.type)}
+ return list;
+}
+async function loadDocument(token,ref,file,validate){
+ const data=await githubRequest(token,`contents/public/${file}?ref=${encodeURIComponent(ref)}`);
+ if(!data.content)throw new Error('Fichier trop volumineux pour cette méthode de lecture.');
+ const bytes=Uint8Array.from(atob(data.content.replace(/\s/g,'')),c=>c.charCodeAt(0));
+ return {items:validate(JSON.parse(new TextDecoder().decode(bytes))),sha:data.sha};
+}
+export const loadAdminCatalog=(token,ref='main')=>loadDocument(token,ref,'catalog.json',validateCatalog);
+export const loadAdminCategories=(token,ref='main')=>loadDocument(token,ref,'categories.json',validateCategories);
+export const publishCatalog=(token,items,expectedSha)=>publishDocument(token,items,expectedSha,'catalog.json',validateCatalog);
+export const publishCategories=(token,items,expectedSha)=>publishDocument(token,items,expectedSha,'categories.json',validateCategories);
+async function publishDocument(token,items,expectedSha,file,validate){
+ validate(items);
  const content=JSON.stringify(items,null,2)+'\n';
- if(new TextEncoder().encode(content).length>900000)throw new Error('Catalogue trop volumineux : réduis le poids des nouvelles photos. Maximum 900 Ko.');
+ if(new TextEncoder().encode(content).length>900000)throw new Error('Fichier trop volumineux : réduis le poids des nouvelles photos. Maximum 900 Ko.');
  for(let attempt=0;attempt<2;attempt++){
   const ref=await githubRequest(token,'git/ref/heads/main');
-  const current=await loadAdminCatalog(token,ref.object.sha);
+  const current=await loadDocument(token,ref.object.sha,file,validate);
   if(current.sha!==expectedSha)throw new Error('Le catalogue a été modifié ailleurs. Tes saisies sont conservées dans le formulaire. Recharge le catalogue avant de reprendre la modification.');
   if(JSON.stringify(current.items)===JSON.stringify(items))return current.sha;
   const head=await githubRequest(token,`git/commits/${ref.object.sha}`);
   const post=(path,body)=>githubRequest(token,path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
   const blob=await post('git/blobs',{content,encoding:'utf-8'});
-  const tree=await post('git/trees',{base_tree:head.tree.sha,tree:['public/catalog.json','docs/catalog.json'].map(path=>({path,mode:'100644',type:'blob',sha:blob.sha}))});
-  const commit=await post('git/commits',{message:'Update TAMNI catalogue from admin',tree:tree.sha,parents:[ref.object.sha]});
+  const tree=await post('git/trees',{base_tree:head.tree.sha,tree:[`public/${file}`,`docs/${file}`].map(path=>({path,mode:'100644',type:'blob',sha:blob.sha}))});
+  const commit=await post('git/commits',{message:'Update TAMNI '+(file==='categories.json'?'categories':'catalogue')+' from admin',tree:tree.sha,parents:[ref.object.sha]});
   try{
    await githubRequest(token,'git/refs/heads/main',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({sha:commit.sha,force:false})});
    return blob.sha;
