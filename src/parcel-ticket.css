@@ -29,7 +29,6 @@
 .parcel-ticket-payment>span{display:block;font-size:7pt;line-height:1.2}
 .parcel-ticket-payment small{display:block;font-size:5pt;margin-top:.5mm}
 .parcel-ticket-payment>strong{display:block;font:700 16pt/1.1 Arial,sans-serif;margin-top:1mm;white-space:nowrap}
-.parcel-ticket-shipping{font-size:5pt;margin-top:1mm;text-align:center;line-height:1.2}
 @page tamni-parcel{size:100mm 60mm;margin:0}
 @media print{
  html:has(.parcel-print-root),body:has(.parcel-print-root){margin:0!important;padding:0!important;background:#fff!important;width:100mm!important;min-width:0!important;height:auto!important;overflow:visible!important}

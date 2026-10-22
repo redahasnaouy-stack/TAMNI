@@ -15,7 +15,7 @@ function orderData(input,catalog,now){
  if(!Array.isArray(input.items)||!input.items.length||input.items.length>40)fail(400,'خاص اختيار منتج.');
  const items=input.items.map(x=>{const p=catalog.find(p=>p.id===x.id&&p.active!==false);if(!p||!p.sizes.includes(x.size)||!p.colors.includes(x.color)||!Number.isInteger(x.quantity)||x.quantity<1||x.quantity>20)fail(400,'المنتج أو المقاس أو اللون تبدل. حدّث السلة.');return {id:p.id,name:p.name,label:p.label,size:x.size,color:x.color,quantity:x.quantity,price:p.price,embroidery:!!x.embroidery,text:string(x.text,80)}});
  const subtotal=items.reduce((n,x)=>n+x.price*x.quantity,0);
- return {customer,items,subtotal,total:subtotal,shippingFee:0,shippingFeeConfirmed:false,confirmation:'pending',payment:'unpaid',shipping:'pending',createdAt:now.toISOString(),date:dateKey(now),updatedAt:now.toISOString()};
+ return {customer,items,subtotal,total:subtotal,shippingFee:0,shippingFeeConfirmed:true,confirmation:'pending',payment:'unpaid',shipping:'pending',createdAt:now.toISOString(),date:dateKey(now),updatedAt:now.toISOString()};
 }
 export function createManagementHandler({getStore,catalog,fetcher=fetch,now=()=>new Date()}){
  return async req=>{try{
@@ -45,7 +45,7 @@ export function createManagementHandler({getStore,catalog,fetcher=fetch,now=()=>
     const id=url.searchParams.get('id');if(!/^[a-f0-9-]{36}$/.test(id||''))fail(400,'طلب غير صالح.');
     const record=await store.getWithMetadata(`orders/${id}`,{type:'json'});if(!record)fail(404,'الطلب ما بقاش موجود.');const input=await body(req);if(input.revision!==record.etag)fail(409,'الطلب تبدل فجلسة أخرى. حدّث اللائحة.');
     const next={...record.data};for(const field of Object.keys(statuses)){if(input[field]!==undefined){if(!statuses[field].includes(input[field]))fail(400,'حالة غير صالحة.');next[field]=input[field]}}
-    if(input.shippingFee!==undefined){if(typeof input.shippingFee!=='number'||input.shippingFee<0||input.shippingFee>5000)fail(400,'ثمن التوصيل غير صالح.');next.shippingFee=input.shippingFee;next.shippingFeeConfirmed=true;next.total=next.subtotal+next.shippingFee}
+    if(input.shippingFee!==undefined)fail(400,'أثمنة المنتجات نهائية. ما يمكنش تزيد مصاريف على الطلب.');
     next.updatedAt=now().toISOString();const saved=await store.setJSON(`orders/${id}`,next,{onlyIfMatch:record.etag});if(!saved.modified)fail(409,'الطلب تبدل. حدّث اللائحة.');return reply({order:{...next,revision:saved.etag}});
    }
   }

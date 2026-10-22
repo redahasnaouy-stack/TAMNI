@@ -22,7 +22,7 @@ function Ticket({order}){
    <section className="parcel-ticket-recipient" dir="rtl"><h2 className="parcel-ticket-bar">الزبون / CLIENT</h2><strong className="parcel-ticket-customer-name">{order.customer.name}</strong><b className="parcel-ticket-phone" dir="ltr">{order.customer.phone}</b><span className="parcel-ticket-city">{order.customer.city}</span><div className="parcel-ticket-sender"><b>TAMNI · 0617571113</b><span>www.tamnii.com</span></div></section>
    <section className="parcel-ticket-order"><h2 className="parcel-ticket-bar">المنتجات / ARTICLES</h2><ul className="parcel-ticket-items">{order.items.map((item,i)=><li key={i}><strong>{item.name}</strong><span><bdi>{item.size}</bdi> · <bdi>{item.color}</bdi> · Qté : {item.quantity}{item.embroidery?' · تطريز':''}</span>{item.embroidery&&item.text&&<small>{item.text}</small>}</li>)}</ul>
     <div className="parcel-ticket-payment"><span>{paid?'المبلغ المتبقي':order.payment==='refunded'?'المبلغ للمراجعة':'المبلغ للاستخلاص'}<small>{paid?'PAYÉ':order.payment==='refunded'?'REMBOURSÉ':'À ENCAISSER · CASH'}</small></span><strong>{formatPrice(amount)}</strong></div>
-    <div className="parcel-ticket-shipping" dir="rtl">{order.shippingFeeConfirmed?`التوصيل: ${formatPrice(order.shippingFee)} — داخل فالمجموع`:'ثمن التوصيل مازال غير مؤكد؛ المبلغ دون توصيل.'}</div>
+
    </section>
   </div>
  </article>

@@ -1,12 +1,12 @@
 import React,{useState,useRef} from 'react';
-import {MessageCircle,Truck,CreditCard} from 'lucide-react';
+import {MessageCircle,CreditCard} from 'lucide-react';
 import {formatPrice} from './catalogStore';
 import {whatsappNumber} from './catalog';
 import './checkout.css';
 import {recordCheckout} from './managementApi';
 export function DeliveryInfo({compact=false}){
- const content=<><div><Truck size={21}/><h3>Livraison au Maroc</h3><p>Les frais et le délai sont confirmés sur WhatsApp selon ta ville, avant la validation de ta commande.</p></div><div><CreditCard size={21}/><h3>Paiement à la livraison</h3><p>Règle ta commande en espèces au moment de recevoir ton colis. Aucun paiement en ligne ni avance n’est demandé.</p></div></>;
- return compact?<details className="checkout-delivery"><summary>Livraison et paiement : ce qu’il faut savoir</summary><div>{content}</div></details>:<section id="livraison" className="delivery-section"><div><span className="eyebrow">AVANT DE COMMANDER</span><h2>De notre atelier<br/>jusqu’à toi.</h2></div>{content}</section>
+ const content=<div><CreditCard size={21}/><h3>Paiement à la livraison</h3><p>Règle ta commande en espèces au moment de recevoir ton colis.</p></div>;
+ return compact?<details className="checkout-delivery"><summary>Paiement à la livraison</summary><div>{content}</div></details>:<section id="livraison" className="delivery-section"><div><span className="eyebrow">EN TOUTE SIMPLICITÉ</span><h2>الدفع عند الاستلام</h2></div>{content}</section>
 }
 export function checkoutUrl(cart,customer,reference){
  const total=cart.reduce((n,x)=>n+x.product.price*x.quantity,0);
@@ -18,7 +18,7 @@ export function checkoutUrl(cart,customer,reference){
  const text=[
   `*Commande TAMNI*${reference?`\nRéf : ${reference}`:''}`,
   productLines,
-  `Sous-total : ${formatPrice(total)} (hors livraison${cart.some(x=>x.embroidery)?' et broderie':''})\nPaiement : en espèces à la livraison`,
+  `Total : ${formatPrice(total)}\nPaiement : en espèces à la livraison`,
   `*Coordonnées*\nClient : ${customer.name.trim()}\nTéléphone : ${customer.phone.trim()}\nVille : ${customer.city.trim()}`
  ].join('\n\n');
  return `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(text)}`;

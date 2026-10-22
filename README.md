@@ -21,8 +21,8 @@ npm run dev -- --port 5173
 - Catalogue et prix : `public/catalog.json` ; contacts et messages : `src/catalog.js` ; photos : `public/products/`.
 - WhatsApp : +212 617 571 113 ; Instagram : @tamni_streetwear.
 - Les cinq photos JPEG originales fournies par le propriétaire sont utilisées sans retouche dans le catalogue et la bannière.
-- Le panier conserve les choix sur cet appareil. Les demandes de broderie et leur supplément sont soumis à confirmation. Les couleurs et tailles sont des souhaits, sans recoloration des photos originales.
-- Prix initiaux demandés par le propriétaire : T-shirt 90 DH, Darwish 120 DH, Angel 110 DH, hoodie Palestine 120 DH et Anime 115 DH. Les prix excluent la livraison et les suppléments de personnalisation. Les tailles et couleurs se gèrent dans le catalogue, sans gestion quantitative du stock.
+- Le panier conserve les choix sur cet appareil. Les demandes de broderie peuvent être précisées à l’équipe. Les couleurs et tailles sont des souhaits, sans recoloration des photos originales.
+- Prix initiaux demandés par le propriétaire : T-shirt 90 DH, Darwish 120 DH, Angel 110 DH, hoodie Palestine 120 DH et Anime 115 DH. Les prix affichés sont finaux et comprennent la livraison, sans ligne de frais séparée. Les tailles et couleurs se gèrent dans le catalogue, sans gestion quantitative du stock.
 - Le partage des designs utilise Web Share API avec le vrai fichier original (sans conversion) et les détails du projet, si le navigateur permet le partage de fichiers. Le client doit choisir WhatsApp puis le contact +212617571113 et confirmer l’envoi. Sans support natif, des étapes expliquent comment télécharger l’original, ouvrir la conversation puis joindre le fichier manuellement. Un lien wa.me seul ne peut pas envoyer une pièce jointe. Instagram ouvre le profil pour un envoi manuel.
 - Aucun paiement en ligne. Les commandes sont confirmées directement par l’équipe sur WhatsApp. Le catalogue est publié dans GitHub par l’espace admin.
 
@@ -54,11 +54,11 @@ Les requêtes admin GitHub désactivent le cache. En cas d’avancement concurre
 
 ## Livraison, paiement et coordonnées de commande
 
-Le paiement se fait en espèces à la livraison, selon l’instruction du propriétaire. Les frais et délais, non fournis, sont confirmés par WhatsApp selon la ville. Informations affichées dans la section livraison et dans le panier.
+Le paiement se fait en espèces à la livraison, selon l’instruction du propriétaire. Les prix catalogue sont les montants finaux à payer, livraison comprise ; aucune mention ni saisie de frais de livraison ne figure sur le site, les messages WhatsApp ou les tickets. Les nouvelles commandes ne peuvent pas recevoir de frais supplémentaires via l’API. Les montants des commandes historiques restent conservés.
 
 Avant d’ouvrir WhatsApp pour confirmer un achat du catalogue, le panier exige uniquement le nom, le téléphone et la ville. Les champs vides, noms/villes composés d’espaces et numéros invalides bloquent l’ouverture. Les numéros marocains locaux et internationaux sont acceptés. Le bouton de commande rapide d’une fiche passe aussi par le panier et ce formulaire. Les coordonnées et le récapitulatif complet sont inclus dans le message WhatsApp. Aucune persistance de ces coordonnées dans localStorage, sessionStorage ou GitHub. Le formulaire de design personnalisé reste une prise de contact séparée.
 
-La confirmation WhatsApp utilise un format court : un bloc par produit (nom, taille, couleur, quantité et broderie éventuelle), un sous-total et le paiement, puis les coordonnées du client en dernier. Aucun récapitulatif de variantes ou de quantités en double.
+La confirmation WhatsApp utilise un format court : un bloc par produit (nom, taille, couleur, quantité et broderie éventuelle), un total final et le paiement, puis les coordonnées du client en dernier. Aucun récapitulatif de variantes ou de quantités en double.
 
 La réussite de navigator.share signifie uniquement que le fichier est remis à l’interface de partage, jamais une confirmation de livraison WhatsApp. Annulation et erreurs conservent le fichier dans le formulaire. Les tests vérifient les octets originaux et le nom/type du File partagé, le téléchargement de secours et l’annulation ; l’envoi réel dans l’application WhatsApp ne peut pas être automatisé dans Chromium cloud.
 
@@ -80,7 +80,7 @@ Après connexion, l’administration affiche un dashboard RTL arabe inspiré des
 
 Sur Netlify, `netlify/functions/tamni-api.mjs` enregistre les commandes et les visites dans le store privé Netlify Blobs `tamni-private-management`. Aucun nom, téléphone ou ville client ne va dans le dépôt public. Le panier enregistre les choix avant d’ouvrir WhatsApp et ajoute une référence courte au message ; une commande enregistrée ne prouve pas que le message a été envoyé ni que la vente est confirmée. En cas d’indisponibilité du backend, WhatsApp reste utilisable avec un avertissement, et l’équipe peut saisir la commande manuellement. Les variantes et les prix sont validés côté serveur depuis le catalogue du déploiement ; les changements de prix nécessitent donc la fin du déploiement Netlify.
 
-- Commandes : recherche, filtres, confirmation, paiement, expédition, détail, frais de livraison, impression, saisie manuelle et export CSV.
+- Commandes : recherche, filtres, confirmation, paiement, expédition, détail, impression, saisie manuelle et export CSV.
 - Statistiques : période, valeurs maximale/moyenne/minimale des commandes, ventes réellement marquées payées (hors commandes annulées), courbes et sessions/pages par appareil. Aucun historique WhatsApp antérieur n’est importé. Les sessions sont comptées par jour et par onglet, sans IP ni identifiant de session brut dans le store.
 - Clients : regroupement des commandes par téléphone et recherche.
 - Compte et équipe : identité GitHub vérifiée côté serveur. Le propriétaire `redahasnaouy-stack` peut autoriser un compte GitHub en lecture seule ou en gestion des commandes. Aucune invitation externe n’est envoyée. Modifier les produits nécessite toujours les permissions GitHub du dépôt. Chaque requête privée vérifie le jeton GitHub, sans le conserver. Les modifications concurrentes de commandes utilisent les révisions du stockage et renvoient un conflit plutôt que d’écraser un changement.
@@ -91,6 +91,6 @@ Validation : `npm run test:server` vérifie authentification, contrôle des prix
 
 ## Carte colis compacte
 
-Le bouton « طباعة بطاقة الطرد · 10 × 6 سم » dans le détail d’une commande imprime uniquement une carte horizontale blanche et noire de 100 × 60 mm, avec cadre arrondi, en-tête TAMNI, QR ouvrant le site public (sans données client), avec nom/téléphone/ville, référence, produits et variantes, quantités, livraison et montant à encaisser. Le montant restant d’une commande payée est zéro ; les frais non confirmés sont signalés. Aucun champ de formulaire ni navigation n’est imprimé. Une commande très longue peut utiliser plusieurs cartes plutôt que tronquer ses articles.
+Le bouton « طباعة بطاقة الطرد · 10 × 6 سم » dans le détail d’une commande imprime uniquement une carte horizontale blanche et noire de 100 × 60 mm, avec cadre arrondi, en-tête TAMNI, QR ouvrant le site public (sans données client), avec nom/téléphone/ville, référence, produits et variantes, quantités et montant final à encaisser. Le montant restant d’une commande payée est zéro ; aucune ligne de frais supplémentaires n’est imprimée. Aucun champ de formulaire ni navigation n’est imprimé. Une commande très longue peut utiliser plusieurs cartes plutôt que tronquer ses articles.
 
 Dans le dialogue d’impression, utiliser le papier 100 × 60 mm, l’échelle 100 % et désactiver les en-têtes/pieds de page du navigateur. Sur imprimante A4, la carte peut être imprimée à taille réelle puis découpée ; le format physique dépend des papiers acceptés par l’imprimante. La prévisualisation est disponible avant impression. Les tests PDF utilisent aussi `pdfinfo` et `pdftotext` de Poppler pour contrôler la taille, le nombre de pages et le contenu.
