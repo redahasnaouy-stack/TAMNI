@@ -19,6 +19,8 @@ export function validateCatalog(value){
   if(!Array.isArray(p.sizes)||!p.sizes.length||p.sizes.some(s=>typeof s!=='string'||s.length>15))throw new Error('Sélectionne au moins une taille.');
   if(!Array.isArray(p.colors)||!p.colors.length||p.colors.some(c=>typeof c!=='string'||c.length>30))throw new Error('Sélectionne au moins une couleur.');
   if(typeof p.image!=='string'||!( /^products\/[a-zA-Z0-9._-]+$/.test(p.image)||/^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+/=]+$/.test(p.image)))throw new Error('Image invalide : utilise une photo JPG, PNG ou WEBP.');
+  if(p.newArrival!==undefined&&typeof p.newArrival!=='boolean')throw new Error('Option nouveauté invalide.');
+  if(p.newArrivalOrder!==undefined&&(!Number.isInteger(p.newArrivalOrder)||p.newArrivalOrder<1||p.newArrivalOrder>99))throw new Error('L’ordre de nouveauté doit être compris entre 1 et 99.');
   validateTranslations(p.translations);
   if(p.description!=null&&(typeof p.description!=='string'||p.description.length>1000))throw new Error('Description trop longue.');
  }
