@@ -10,7 +10,7 @@ export default function CinematicHero({product}){
   <div className="cinema-backdrop" aria-hidden="true">{product&&<img src={photoUrl(product)} alt="" fetchPriority="high"/>}</div>
   <div className="cinema-vignette"/><div className="cinema-glow"/><div className="cinema-grain" aria-hidden="true"/>
   <div className="cinema-meta"><span><i/> TAMNI / CUSTOM CLOTHING</span><span>{t('heroMeta')}</span></div>
-  <div className="cinema-content"><span className="cinema-overline">{t('heroOverline')}</span><h1 id="cinema-title"><span lang="ar" dir="rtl">تامني</span></h1><p>{t('heroIntro')}</p><div className="cinema-actions"><a className="cinema-primary" href={`${import.meta.env.BASE_URL}?view=catalogues`}>SHOP NOW <ArrowUpRight size={18}/></a></div></div>
+  <div className="cinema-content"><span className="cinema-overline">{t('heroOverline')}</span><h1 id="cinema-title" aria-label="تامني"><span className="tamni-calligraphy" lang="ar" dir="rtl" data-word="تامني"><span className="tamni-calligraphy-face">تامني</span></span></h1><p>{t('heroIntro')}</p><div className="cinema-actions"><a className="cinema-primary" href={`${import.meta.env.BASE_URL}?view=catalogues`}>SHOP NOW <ArrowUpRight size={18}/></a></div></div>
   <div className="cinema-brand"><img src={brandLogoUrl} alt="TAMNI — Custom Clothing" width="1254" height="1254" fetchPriority="high"/></div>
   <div className="cinema-bottom"><a href={`${import.meta.env.BASE_URL}?view=catalogues`}><span className="cinema-scroll"><ArrowDown size={14}/></span> {t('heroScroll')}</a><span lang="ar" dir="rtl">البس حكايتك.</span><span>01 / {t('heroBottom')}</span></div>
  </section>

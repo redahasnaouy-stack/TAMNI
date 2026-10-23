@@ -1,0 +1,11 @@
+@font-face{font-family:'TAMNI Ruqaa';src:url('./assets/fonts/ArefRuqaa-Bold.ttf') format('truetype');font-weight:700;font-style:normal;font-display:swap}
+.cinema-content #cinema-title{font-family:'TAMNI Ruqaa',serif;font-size:clamp(150px,16vw,230px);font-weight:700;font-synthesis:none;letter-spacing:0;line-height:1.3;margin:8px 0 20px;overflow:visible}
+.tamni-calligraphy{display:inline-block;position:relative;isolation:isolate;padding:0 .07em .08em;white-space:nowrap;transform:perspective(900px) rotateX(8deg) rotateY(-9deg) rotate(-3deg);transform-origin:center center;filter:drop-shadow(0 18px 16px #0009)}
+.tamni-calligraphy:before{content:attr(data-word);position:absolute;inset:0;padding:inherit;color:#81623a;z-index:-1;text-shadow:1px 1px 0 #d4bd86,2px 2px 0 #ae9057,3px 3px 0 #9c7c47,4px 4px 0 #8c6b3d,5px 5px 0 #7c5d34,6px 6px 0 #6b4e2c,7px 7px 0 #5b4125,8px 8px 0 #49341e,9px 9px 1px #332316,12px 16px 15px #000b}
+.tamni-calligraphy-face{display:block;color:#f0dfb5;background:linear-gradient(140deg,#fff9e8 5%,#ebd9aa 24%,#b99a5f 43%,#f5e9cb 57%,#d3bb83 76%,#fff4d9 94%);background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent;-webkit-text-stroke:.35px #f1dfb055;text-shadow:none}
+[dir=rtl] .tamni-calligraphy{transform:perspective(900px) rotateX(8deg) rotateY(9deg) rotate(-3deg)}
+@media(max-width:850px){.cinema-content #cinema-title{font-size:clamp(140px,22vw,195px)}}
+@media(max-width:700px){.cinema-content #cinema-title{font-size:clamp(126px,34vw,175px);line-height:1.4;margin:0 0 12px}.tamni-calligraphy{transform:perspective(650px) rotateX(6deg) rotateY(-7deg) rotate(-3deg);filter:drop-shadow(0 12px 12px #0009)}[dir=rtl] .tamni-calligraphy{transform:perspective(650px) rotateX(6deg) rotateY(7deg) rotate(-3deg)}.tamni-calligraphy:before{text-shadow:1px 1px 0 #d4bd86,2px 2px 0 #ae9057,3px 3px 0 #9c7c47,4px 4px 0 #7c5d34,5px 5px 0 #5b4125,6px 6px 0 #332316,8px 12px 12px #000b}}
+@media(forced-colors:active){.tamni-calligraphy-face{background:none;color:CanvasText;-webkit-text-fill-color:CanvasText;-webkit-text-stroke:0}.tamni-calligraphy:before{display:none}.tamni-calligraphy{filter:none;transform:none}}
+[dir=rtl] .cinema-brand{left:3%;right:auto}
+@media(max-width:700px){[dir=rtl] .cinema-brand{left:4%;right:auto}}

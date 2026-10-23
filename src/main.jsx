@@ -20,6 +20,7 @@ import './luxury.css';
 import './dashboard.css';
 import './dashboard-maison.css';
 import './shop-experience.css';
+import './hero-lettering.css';
 import {trackVisit} from './managementApi';
 const base=import.meta.env.BASE_URL;
 const shopUrl=`${base}?view=catalogues`;
