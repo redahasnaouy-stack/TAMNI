@@ -1,6 +1,6 @@
 import {test,expect} from '@playwright/test';
 test('les fenêtres produit et panier retiennent le focus puis le rendent au déclencheur',async({page})=>{
- await page.goto('/');const trigger=page.locator('article.product').first().getByRole('button',{name:'Découvrir la pièce'});await trigger.click();
+ await page.goto('/?tab=all');const trigger=page.locator('article.product').first().getByRole('button',{name:'Découvrir la pièce'});await trigger.click();
  for(let i=0;i<35;i++){await page.keyboard.press('Tab');expect(await page.evaluate(()=>!!document.activeElement.closest('[role="dialog"]'))).toBe(true)}
  await page.keyboard.press('Escape');await expect(trigger).toBeFocused();
  const cart=page.getByRole('button',{name:'Ouvrir le panier'});await cart.click();

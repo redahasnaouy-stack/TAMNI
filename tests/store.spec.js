@@ -1,77 +1,20 @@
 import {test,expect} from '@playwright/test';
 import {submitCheckout} from './checkoutHelpers';
-test('catalogue, filtres, favoris et commande WhatsApp',async({page})=>{
- await page.goto('/');
- await expect(page.getByRole('heading',{name:'À chacun son empreinte.'})).toBeVisible();
- await expect(page.locator('article.product')).toHaveCount(5);
- await page.getByRole('button',{name:/^T-shirts\d/}).click();
- await expect(page.locator('article.product')).toHaveCount(1);
- await page.getByRole('button',{name:'Ajouter aux favoris Palestine — Heritage'}).click();
- await page.getByRole('button',{name:'Choisir Palestine — Heritage',exact:true}).click();
- const dialog=page.getByRole('dialog');
- await expect(dialog.getByRole('button',{name:'Choisis ta taille pour continuer'})).toBeDisabled();
- await dialog.getByRole('button',{name:'XL',exact:true}).click();
- await dialog.getByRole('button',{name:'Beige',exact:true}).click();
- await dialog.getByRole('button',{name:'Augmenter la quantité'}).click();
- await dialog.getByRole('button',{name:'Commander sur WhatsApp'}).click();
- const url=await submitCheckout(page,page.getByRole('dialog',{name:'Mon panier'}));
- expect(url.pathname).toBe('/212617571113');
- expect(url.searchParams.get('text')).toContain('Taille : XL');
- expect(url.searchParams.get('text')).toContain('Couleur : Beige');
- expect(url.searchParams.get('text')).toContain('Quantité : 2');
- await page.keyboard.press('Escape');await expect(dialog).toHaveCount(0);
+import {addFirst,openCheckout} from './shopHelpers';
+import {catalog} from './adminHelpers';
+test('inline size and colour, adding keeps shopping and checkout starts only from basket',async({page})=>{
+ await page.goto('/?tab=tshirts');const card=page.locator('article.product').first();await expect(card.getByRole('button',{name:'Choisis ta taille',exact:true})).toBeDisabled();await card.getByRole('button',{name:'XL',exact:true}).click();await card.getByRole('button',{name:'Beige',exact:true}).click();await card.getByRole('button',{name:'Augmenter la quantité'}).click();await card.getByRole('button',{name:'Ajouter au panier',exact:true}).click();await expect(page.getByRole('dialog')).toHaveCount(0);await expect(page.getByRole('textbox',{name:'Nom complet'})).toHaveCount(0);await expect(page.locator('.cart-toast')).toContainText('Ajouté au panier');await page.getByRole('button',{name:'Ouvrir le panier',exact:true}).click();const cart=page.getByRole('dialog',{name:'Mon panier'});await expect(cart.getByText('XL · Beige')).toBeVisible();await expect(cart.getByLabel('Nom complet')).toHaveCount(0);await cart.getByRole('button',{name:'Confirmer la commande'}).click();const url=await submitCheckout(page,cart);expect(url.pathname).toBe('/212617571113');expect(url.searchParams.get('text')).toContain('Taille : XL · Couleur : Beige · Quantité : 2');
 });
-test('personnalisation : fichier obligatoire, aperçu et détails du projet',async({page})=>{
- await page.goto('/');await page.getByRole('button',{name:'Envoyer mon design (fichier)'}).click();
- await expect(page.getByRole('alert')).toContainText('Ajoute ton design');
- await page.locator('#design-upload').setInputFiles({name:'mon-design.png',mimeType:'image/png',buffer:Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aoccAAAAASUVORK5CYII=','base64')});
- await expect(page.getByAltText('Aperçu de votre design')).toBeVisible();
- await page.getByLabel('Le support').selectOption('Casquette');
- await expect(page.getByLabel('La taille souhaitée')).toHaveValue('Unique');
- await page.getByPlaceholder('Emplacement du print, quantité, couleur…').fill('Print devant');
- await page.evaluate(()=>{Object.defineProperty(navigator,'canShare',{configurable:true,value:()=>false})});await page.getByRole('button',{name:'Envoyer mon design (fichier)'}).click();
- await expect(page.getByRole('region',{name:'Envoyer le fichier manuellement'})).toBeVisible();const u=new URL(await page.getByRole('link',{name:'Ouvrir la conversation WhatsApp'}).getAttribute('href'));expect(u.searchParams.get('text')).toContain('Casquette');expect(u.searchParams.get('text')).toContain('Print devant');
+test('home has Arabic brand hero, one SHOP NOW CTA and no catalogue grid or custom print card',async({page})=>{
+ await page.goto('/');await expect(page.locator('#cinema-title')).toHaveText('تامني');await expect(page.locator('.cinema-actions a')).toHaveCount(1);await expect(page.locator('.cinema-primary')).toHaveText('SHOP NOW');await expect(page.locator('#catalogues, .products, .custom-card')).toHaveCount(0);await expect(page.getByText('Créer ma pièce',{exact:true})).toHaveCount(0);await page.locator('.cinema-primary').click();await expect(page).toHaveURL(/view=catalogues/);await expect(page.locator('.catalogue-card')).toHaveCount(3);
 });
-test('mobile : aucun débordement, menu et illustrations accessibles',async({page})=>{
- await page.setViewportSize({width:390,height:844});await page.goto('/');
- await page.getByRole('button',{name:'Ouvrir le menu'}).click();
- await expect(page.getByRole('link',{name:'L’esprit TAMNI'})).toBeVisible();
- expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true);
- await expect.poll(()=>page.locator('.garment-art img').evaluateAll(imgs=>imgs.length>0&&imgs.every(i=>i.complete&&i.naturalWidth>0)),{timeout:15000}).toBe(true);
- await page.getByRole('button',{name:'Ouvrir le menu'}).click();
- await page.screenshot({path:'/tmp/tamni-mobile.png',fullPage:true});
+test('mobile catalogue has no overflow and category bar stays above products while scrolling',async({page})=>{
+ await page.setViewportSize({width:390,height:844});await page.goto('/?tab=all');await page.getByRole('button',{name:'Ouvrir le menu'}).click();await expect(page.getByRole('link',{name:'L’esprit TAMNI'})).toBeVisible();await page.getByRole('button',{name:'Ouvrir le menu'}).click();expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);await page.evaluate(()=>scrollTo(0,800));const bar=page.locator('.category-bar');await expect(bar).toBeInViewport();expect(await bar.evaluate(el=>getComputedStyle(el).position)).toBe('sticky');await expect(bar.getByRole('link',{name:'SHOP ALL',exact:true})).toBeVisible();await page.screenshot({path:'/tmp/tamni-mobile-shop-new.png',fullPage:true});
 });
-
-test('options dans la fiche, panier persistant et confirmation complète',async({page})=>{
- await page.goto('/');
- const first=page.locator('article.product').first();
- await expect(page.locator('.products .size-options, .products .color-options')).toHaveCount(0);
- await first.getByRole('button',{name:'Découvrir la pièce'}).click();
- const details=page.getByRole('dialog');
- await expect(details.getByRole('button',{name:'Choisis ta taille pour continuer'})).toBeDisabled();
- await details.getByRole('button',{name:'L',exact:true}).click();
- await details.getByRole('button',{name:'Bordeaux',exact:true}).click();
- await details.getByRole('button',{name:'Demander une broderie',exact:false}).click();
- await details.getByLabel('Texte de la broderie').fill('TAMNI');
- await details.getByRole('button',{name:'Augmenter la quantité'}).click();
- await details.getByRole('button',{name:'Ajouter au panier'}).click();
- const cart=page.getByRole('dialog',{name:'Mon panier'});
- await expect(cart.getByText('L · Bordeaux')).toBeVisible();
- await expect(cart.getByText('Broderie demandée : TAMNI')).toBeVisible();
- await cart.getByRole('button',{name:/Augmenter/}).click();
- const u=await submitCheckout(page,cart);
- expect(u.searchParams.get('text')).toContain('Quantité : 3');
- expect(u.searchParams.get('text')).toContain('Broderie demandée : TAMNI');
- await page.reload();await page.getByRole('button',{name:'Ouvrir le panier'}).click();
- await expect(cart.getByText('L · Bordeaux')).toBeVisible();
- await cart.getByRole('button',{name:/Retirer/}).click();
- await expect(cart.getByText('Ton histoire commence avec une pièce.')).toBeVisible();
+test('basket persists, optional embroidery details are preserved and customer details are not stored',async({page})=>{
+ await page.goto('/?tab=all');await page.locator('article.product').first().getByRole('button',{name:'Découvrir la pièce'}).click();const modal=page.getByRole('dialog');await modal.getByRole('button',{name:'L',exact:true}).click();await modal.getByRole('button',{name:'Bordeaux',exact:true}).click();await modal.getByRole('button',{name:'Demander une broderie'}).click();await modal.getByLabel('Texte de la broderie').fill('TAMNI');await modal.getByRole('button',{name:'Ajouter au panier'}).click();const cart=await openCheckout(page);await expect(cart.getByText('L · Bordeaux')).toBeVisible();await expect(cart.getByText('Broderie demandée : TAMNI')).toBeVisible();const url=await submitCheckout(page,cart);expect(url.searchParams.get('text')).toContain('Broderie demandée : TAMNI');await page.reload();await page.getByRole('button',{name:'Ouvrir le panier',exact:true}).click();await expect(cart.getByText('L · Bordeaux')).toBeVisible();await expect(cart.getByLabel('Nom complet')).toHaveCount(0);await cart.getByRole('button',{name:/Retirer/}).click();await expect(cart.getByText('Ton histoire commence avec une pièce.')).toBeVisible();
 });
-test('catégorie partageable et grille desktop de trois colonnes',async({page})=>{
- await page.setViewportSize({width:1366,height:900});await page.goto('/?tab=hoodies');
- await expect(page.locator('article.product')).toHaveCount(4);
- expect(await page.locator('.products').evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').length)).toBe(3);
- await page.getByRole('button',{name:/T-shirts & Hoodies/}).click();
- await expect(page).toHaveURL(/tab=all/);
- await page.screenshot({path:'/tmp/tamni-shop-desktop.png',fullPage:true});
+test('category links work in same tab and browser back restores the previous category',async({page})=>{
+ await page.setViewportSize({width:1366,height:900});await page.goto('/?tab=hoodies');await expect(page.locator('article.product')).toHaveCount(catalog.filter(p=>p.active!==false&&p.type==='hoodies').length);expect(await page.locator('.products').evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').length)).toBe(3);await page.locator('.category-bar').getByRole('link',{name:'SHOP ALL',exact:true}).click();await expect(page).toHaveURL(/tab=all/);await expect(page.locator('article.product')).toHaveCount(catalog.filter(p=>p.active!==false).length);await page.goBack();await expect(page.locator('article.product')).toHaveCount(catalog.filter(p=>p.active!==false&&p.type==='hoodies').length);await page.screenshot({path:'/tmp/tamni-shop-desktop-new.png',fullPage:true});
 });
+test('category navigation remains a horizontal strip on mobile in Arabic',async({page})=>{await page.setViewportSize({width:390,height:844});await page.goto('/?tab=all');await page.getByLabel('Language / اللغة').selectOption('ar');const bar=page.locator('.category-bar');expect(await bar.evaluate(el=>getComputedStyle(el).flexDirection)).toBe('row');const boxes=await bar.locator('a').evaluateAll(els=>els.map(e=>e.getBoundingClientRect().top));expect(new Set(boxes).size).toBe(1);expect((await bar.boundingBox()).height).toBeLessThan(110);await page.screenshot({path:'/tmp/tamni-ar-viewport-fixed.png'})});

@@ -1,0 +1,12 @@
+const originalNames={'palestine-tee':'Palestine — Heritage','palestine-hoodie':'Palestine — Heritage',darwish:'Darwish — Poésie libre',angel:'Angel — After dark',anime:'Anime — Silent power'};
+const copy={
+ 'palestine-tee':{en:{name:'Palestine — Heritage',description:'A vintage stamp-inspired Palestine print on an oversized T-shirt.'},ar:{name:'فلسطين — تراث',description:'تيشرت بقصّة واسعة مع طبعة فلسطين المستوحاة من الطوابع القديمة.'}},
+ 'palestine-hoodie':{en:{name:'Palestine — Heritage',description:'An oversized hoodie with a vintage stamp-inspired Palestine print.'},ar:{name:'فلسطين — تراث',description:'هودي بقصّة واسعة مع طبعة فلسطين المستوحاة من الطوابع القديمة.'}},
+ darwish:{en:{name:'Darwish — Free poetry',description:'A tribute to Mahmoud Darwish, combining Arabic poetry with a red print on a brown hoodie.'},ar:{name:'درويش — شعر حر',description:'تكريم لمحمود درويش يجمع الشعر العربي وطبعة حمراء على هودي بني.'}},
+ angel:{en:{name:'Angel — After dark',description:'A red Angel print with Gothic lettering on a black hoodie.'},ar:{name:'أنجل — بعد الغروب',description:'هودي أسود مع طبعة أنجل الحمراء وحروف بطابع قوطي.'}},
+ anime:{en:{name:'Anime — Silent power',description:'A black hoodie with a black-and-white anime print on the front and back.'},ar:{name:'أنمي — قوة صامتة',description:'هودي أسود مع طبعة أنمي بالأبيض والأسود في الأمام والخلف.'}}
+};
+const frDescriptions={'palestine-tee':'Un imprimé Palestine au style timbre vintage sur un t-shirt oversize.','palestine-hoodie':'Un hoodie oversize avec un imprimé Palestine au style timbre vintage.',darwish:'Un hommage à Mahmoud Darwish, entre poésie arabe et composition rouge sur marron.',angel:'Un imprimé Angel rouge et un lettrage gothique sur un hoodie noir.',anime:'Un hoodie noir avec un imprimé anime noir et blanc à l’avant et au dos.'};
+export function productName(p,locale){if(p.translations?.[locale]?.name)return p.translations[locale].name;return p.name===originalNames[p.id]?(copy[p.id]?.[locale]?.name||p.name):p.name}
+export function productDescription(p,locale){return p.translations?.[locale]?.description||p.description||(locale==='fr'?frDescriptions[p.id]:copy[p.id]?.[locale]?.description)||''}
+export function productTag(p,locale){return p.translations?.[locale]?.tag||({en:{'LA SÉLECTION TAMNI':'THE TAMNI SELECTION','COUP DE CŒUR':'OUR FAVOURITE','ANIME CULTURE':'ANIME CULTURE'},ar:{'LA SÉLECTION TAMNI':'اختيارات تامني','COUP DE CŒUR':'قطعتنا المفضلة','ANIME CULTURE':'ثقافة الأنمي'}}[locale]?.[p.tag]||p.tag)}

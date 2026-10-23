@@ -1,6 +1,6 @@
 # TAMNI — Wear your story
 
-Boutique streetwear React + Vite, en français, adaptée aux mobiles. Catalogue luxe en noir charbon, ivoire et champagne en trois colonnes sur ordinateur (deux sur mobile), favoris, choix de taille/couleur dans la fiche produit uniquement, panier persistant et confirmation WhatsApp, personnalisation avec aperçu de fichier.
+Boutique streetwear React + Vite, en arabe, français et anglais, adaptée aux mobiles. Catalogue luxe en noir charbon, ivoire et champagne en trois colonnes sur ordinateur (deux sur mobile), favoris, choix de taille/couleur sous chaque produit, panier persistant et confirmation WhatsApp en deux étapes, personnalisation avec aperçu de fichier.
 
 ## Développement
 
@@ -23,7 +23,7 @@ npm run dev -- --port 5173
 - Les cinq photos JPEG originales fournies par le propriétaire sont utilisées sans retouche dans le catalogue et la bannière.
 - Le panier conserve les choix sur cet appareil. Les demandes de broderie peuvent être précisées à l’équipe. Les couleurs et tailles sont des souhaits, sans recoloration des photos originales.
 - Prix initiaux demandés par le propriétaire : T-shirt 90 DH, Darwish 120 DH, Angel 110 DH, hoodie Palestine 120 DH et Anime 115 DH. Les prix affichés sont finaux et comprennent la livraison, sans ligne de frais séparée. Les tailles et couleurs se gèrent dans le catalogue, sans gestion quantitative du stock.
-- Le partage des designs utilise Web Share API avec le vrai fichier original (sans conversion) et les détails du projet, si le navigateur permet le partage de fichiers. Le client doit choisir WhatsApp puis le contact +212617571113 et confirmer l’envoi. Sans support natif, des étapes expliquent comment télécharger l’original, ouvrir la conversation puis joindre le fichier manuellement. Un lien wa.me seul ne peut pas envoyer une pièce jointe. Instagram ouvre le profil pour un envoi manuel.
+- Le formulaire de design ouvre directement la conversation WhatsApp TAMNI au +212617571113 avec support, taille, couleur, quantité et notes. Le propriétaire a confirmé ne pas disposer de WhatsApp Business API et a choisi ce fonctionnement : le client joint le fichier original avec + / trombone dans la conversation ouverte. Aucun menu natif de partage ni recherche de destinataire. Aucun fichier n’est envoyé automatiquement ou téléversé sur le site. Le téléchargement de l’original conserve ses octets et son nom.
 - Aucun paiement en ligne. Les commandes sont confirmées directement par l’équipe sur WhatsApp. Le catalogue est publié dans GitHub par l’espace admin.
 
 Les tâches cloud sont isolées : utiliser le checkout existant, sans créer de worktree.
@@ -56,13 +56,11 @@ Les requêtes admin GitHub désactivent le cache. En cas d’avancement concurre
 
 Le paiement se fait en espèces à la livraison, selon l’instruction du propriétaire. Les prix catalogue sont les montants finaux à payer, livraison comprise ; aucune mention ni saisie de frais de livraison ne figure sur le site, les messages WhatsApp ou les tickets. Les nouvelles commandes ne peuvent pas recevoir de frais supplémentaires via l’API. Les montants des commandes historiques restent conservés.
 
-Avant d’ouvrir WhatsApp pour confirmer un achat du catalogue, le panier exige uniquement le nom, le téléphone et la ville. Les champs vides, noms/villes composés d’espaces et numéros invalides bloquent l’ouverture. Les numéros marocains locaux et internationaux sont acceptés. Le bouton de commande rapide d’une fiche passe aussi par le panier et ce formulaire. Les coordonnées et le récapitulatif complet sont inclus dans le message WhatsApp. Aucune persistance de ces coordonnées dans localStorage, sessionStorage ou GitHub. Le formulaire de design personnalisé reste une prise de contact séparée.
+Avant d’ouvrir WhatsApp pour confirmer un achat du catalogue, le panier exige uniquement le nom, le téléphone et la ville. Les champs vides, noms/villes composés d’espaces et numéros invalides bloquent l’ouverture. Les numéros marocains locaux et internationaux sont acceptés. Ajouter un produit ne déclenche aucune fenêtre ni formulaire : le client poursuit son shopping. Il ouvre ensuite sa liste dans le panier et choisit « Confirmer la commande » pour afficher les trois champs. Les coordonnées et le récapitulatif complet sont inclus dans le message WhatsApp. Aucune persistance de ces coordonnées dans localStorage, sessionStorage ou GitHub. Le formulaire de design personnalisé reste une prise de contact séparée.
 
 La confirmation WhatsApp utilise un format court : un bloc par produit (nom, taille, couleur, quantité et broderie éventuelle), un total final et le paiement, puis les coordonnées du client en dernier. Aucun récapitulatif de variantes ou de quantités en double.
 
-La réussite de navigator.share signifie uniquement que le fichier est remis à l’interface de partage, jamais une confirmation de livraison WhatsApp. Annulation et erreurs conservent le fichier dans le formulaire. Les tests vérifient les octets originaux et le nom/type du File partagé, le téléchargement de secours et l’annulation ; l’envoi réel dans l’application WhatsApp ne peut pas être automatisé dans Chromium cloud.
-
-Le formulaire de design affiche la légende exacte (support, taille, couleur et détails) et permet de la copier. Elle est transmise avec le fichier dans Web Share. Si WhatsApp ne reprend pas le texte automatiquement, le client peut le coller dans la légende avant l’envoi ; le comportement de l’application cible ne peut pas être garanti par le site.
+La sélection d’un fichier de design ne constitue pas un envoi. Le site prépare la conversation directement avec TAMNI ; le client joint sa photo et confirme l’envoi dans WhatsApp. L’envoi effectif depuis l’application n’est pas automatisé dans les tests cloud.
 
 ## Thème TAMNI Maison
 
@@ -97,7 +95,7 @@ Dans le dialogue d’impression, utiliser le papier 100 × 60 mm, l’échelle 1
 
 ## Choix des catalogues
 
-« Découvrir la collection » et le menu Shop mènent à des cartes au thème TAMNI configurables dans l’administration (initialement T-shirts, Hoodies et T-shirts & Hoodies). Chaque carte ouvre le catalogue filtré dans le même onglet via un lien natif, avec retour possible par le bouton précédent du navigateur, sans réafficher le hero. Les paramètres `?tab=tshirts`, `?tab=hoodies` et `?tab=all` restent partageables, y compris sur GitHub Pages. Les images proviennent du catalogue actif ; les tailles et couleurs restent dans les fiches produit.
+Le hero affiche « تامني » et un seul bouton « SHOP NOW », qui ouvre `?view=catalogues` dans le même onglet. Les cartes de catégories ne figurent plus sur l’accueil. Les cartes initiales s’affichent dans l’ordre SHOP ALL, T-SHIRTS, HOODIES ; les catégories ajoutées depuis l’administration restent disponibles. Chaque carte ouvre son catalogue dans le même onglet (`?tab=all`, `?tab=tshirts`, `?tab=hoodies`). Une grande barre horizontale de catégories reste sous l’en-tête pendant le défilement du catalogue. Le retour du navigateur restaure le filtre précédent. La carte promotionnelle « Ton idée. Notre prochain print. » est supprimée.
 
 ## Gestion des catégories
 
@@ -106,3 +104,9 @@ Dans `/#admin` → **الفئات**, ajouter une catégorie ou modifier son nom,
 La fiche produit propose les catégories publiées : sélectionner la nouvelle catégorie pour y ranger une pièce. Les cartes de la boutique, titres des catalogues, filtres et graphique de répartition utilisent ces données. Sans image personnalisée, une photo des produits sert de couverture (ou un emplacement TAMNI pour une catégorie vide). Les catalogues s’ouvrent dans le même onglet.
 
 Les catégories sont enregistrées séparément dans `public/categories.json` et `docs/categories.json`, en un commit atomique GitHub. Chaque fichier dispose de sa vérification de révision ; un conflit conserve le formulaire, sans écraser une modification externe. Les changements de catégories ne réécrivent pas les produits. La boutique recharge les deux fichiers sans cache après déploiement Netlify. Limites : 30 catégories, photos JPG/PNG/WEBP de 450 Ko maximum, fichier total de 900 Ko maximum ; les photos téléversées sont publiques comme celles des produits. Aucune donnée privée de commande n’y est stockée.
+
+## Langues et achat sans interruption
+
+Le sélecteur AR / FR / EN de l’en-tête traduit les libellés publics, les couleurs, le panier, la validation, le formulaire personnalisé et les messages WhatsApp. Le choix persiste sur cet appareil ; l’arabe applique `lang="ar"`, `dir="rtl"`. Les valeurs envoyées au serveur (identifiants, couleurs, tailles et quantités) restent canoniques. Le titre de la page et sa description suivent la langue. Les noms propres et textes personnalisés fournis par le propriétaire ne sont pas traduits automatiquement : les formulaires d’administration des produits et catégories proposent des champs العربية / English pour fournir leurs traductions exactes ; les textes d’origine restent le repli. Les copies des cinq modèles initiaux sont localisées dans `src/productCopy.js`. L’administration conserve son interface de gestion arabe/français.
+
+Les tailles, couleurs et quantités disponibles figurent sous chaque produit. Ajouter au panier affiche seulement une notification et met à jour le compteur. Ouvrir le panier permet de relire les choix ; « Confirmer la commande » affiche ensuite nom, téléphone, ville. La dernière action enregistre le récapitulatif privé et ouvre WhatsApp. Les coordonnées client ne sont pas conservées dans localStorage/sessionStorage. Les prix restent finaux, sans frais ajoutés.

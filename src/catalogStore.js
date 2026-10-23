@@ -1,5 +1,13 @@
 export const repository='redahasnaouy-stack/TAMNI';
 export const formatPrice=n=>`${Number(n).toLocaleString('fr-MA',{maximumFractionDigits:2})} DH`;
+function validateTranslations(value){
+ if(value===undefined)return;
+ if(!value||typeof value!=='object'||Array.isArray(value))throw new Error('Traductions invalides.');
+ for(const [locale,fields] of Object.entries(value)){
+  if(!['fr','en','ar'].includes(locale)||!fields||typeof fields!=='object'||Array.isArray(fields))throw new Error('Langue de traduction invalide.');
+  for(const [key,text] of Object.entries(fields))if(!['name','description','tag','label'].includes(key)||typeof text!=='string'||text.length>(key==='description'?1000:140))throw new Error('Texte de traduction invalide ou trop long.');
+ }
+}
 export function validateCatalog(value){
  if(!Array.isArray(value)||value.length>100)throw new Error('Le catalogue doit contenir au maximum 100 produits.');
  const ids=new Set();
@@ -11,6 +19,7 @@ export function validateCatalog(value){
   if(!Array.isArray(p.sizes)||!p.sizes.length||p.sizes.some(s=>typeof s!=='string'||s.length>15))throw new Error('Sélectionne au moins une taille.');
   if(!Array.isArray(p.colors)||!p.colors.length||p.colors.some(c=>typeof c!=='string'||c.length>30))throw new Error('Sélectionne au moins une couleur.');
   if(typeof p.image!=='string'||!( /^products\/[a-zA-Z0-9._-]+$/.test(p.image)||/^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+/=]+$/.test(p.image)))throw new Error('Image invalide : utilise une photo JPG, PNG ou WEBP.');
+  validateTranslations(p.translations);
   if(p.description!=null&&(typeof p.description!=='string'||p.description.length>1000))throw new Error('Description trop longue.');
  }
  return value;
@@ -35,6 +44,7 @@ export function validateCategories(value){
  for(const c of value){
   if(!c||typeof c.id!=='string'||!/^[a-z0-9-]{1,80}$/.test(c.id)||ids.has(c.id))throw new Error('Identifiant catégorie invalide ou dupliqué.');ids.add(c.id);
   if(typeof c.name!=='string'||!c.name.trim()||c.name.length>80)throw new Error('Nom de catégorie obligatoire (80 caractères maximum).');
+  validateTranslations(c.translations);
   if(c.description!=null&&(typeof c.description!=='string'||c.description.length>240))throw new Error('Description de catégorie trop longue.');
   if((c.group!==undefined&&typeof c.group!=='boolean')||(c.id==='all'&&!c.group)||(c.group&&c.id!=='all'))throw new Error('Le catalogue complet doit garder son identifiant all.');
   if(c.image!=null&&(typeof c.image!=='string'||(c.image&&!(/^products\/[a-zA-Z0-9._-]+$/.test(c.image)||/^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+/=]+$/.test(c.image)))))throw new Error('Photo de catégorie invalide.');
