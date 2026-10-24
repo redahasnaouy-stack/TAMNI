@@ -159,5 +159,30 @@
     "tag": "",
     "description": "",
     "active": true
+  },
+  {
+    "id": "produit-f4e44fde",
+    "name": "PALESTINE ",
+    "type": "tshirts",
+    "label": "T-shirt oversize",
+    "price": 90,
+    "image": "products/palestine-tee.jpeg",
+    "sizes": [
+      "M",
+      "L",
+      "XL",
+      "S",
+      "XS",
+      "XXL",
+      "Unique"
+    ],
+    "colors": [
+      "Noir"
+    ],
+    "tag": "",
+    "description": "",
+    "active": true,
+    "newArrival": true,
+    "newArrivalOrder": 1
   }
 ]
