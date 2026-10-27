@@ -20,6 +20,7 @@ import './admin.css';
 import './luxury.css';
 import './dashboard.css';
 import './dashboard-maison.css';
+import './dashboard-studio.css';
 import './shop-experience.css';
 import './hero-lettering.css';
 import {trackVisit} from './managementApi';

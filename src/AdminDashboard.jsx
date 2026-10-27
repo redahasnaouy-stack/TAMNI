@@ -1,11 +1,12 @@
 import React,{useState,useEffect} from 'react';
-import {LayoutDashboard,Package,ShoppingBag,BarChart3,Store,Settings,LogOut,Menu,X,ArrowUpRight,Plus,Tag,Eye,EyeOff,Coins,ExternalLink,MessageCircle,Instagram,ChevronLeft,Users} from 'lucide-react';
+import {LayoutDashboard,Package,ShoppingBag,BarChart3,Store,Settings,LogOut,Menu,X,ArrowUpRight,Plus,Tag,Eye,EyeOff,Coins,ExternalLink,MessageCircle,Instagram,ChevronLeft,Users,Palette} from 'lucide-react';
 const brandLogoUrl=`${import.meta.env.BASE_URL}brand/tamni-logo-transparent.png`;
 import {formatPrice,photoUrl,productCategories} from './catalogStore';
 import {instagram} from './catalog';
+import DesignRequests from './DesignRequests';
 import NewArrivalsManager from './NewArrivalsManager';
 import {useManagement,ConnectionNotice,OrdersPanel,AnalyticsPanel,CustomersPanel,AccountSettings,Stat} from './ManagementPanels';
-const navigation=[['overview','لوحة التحكم',LayoutDashboard],['products','المنتجات',Package],['arrivals','جديدنا',Tag],['categories','الفئات',Tag],['orders','الطلبات',ShoppingBag],['analytics','إحصائيات المتجر',BarChart3],['customers','العملاء',Users],['store','متجري',Store],['settings','الإعدادات',Settings]];
+const navigation=[['overview','لوحة التحكم',LayoutDashboard],['products','المنتجات',Package],['arrivals','جديدنا',Tag],['categories','الفئات',Tag],['orders','الطلبات',ShoppingBag],['designs','طلبات التصاميم',Palette],['analytics','إحصائيات المتجر',BarChart3],['customers','العملاء',Users],['store','متجري',Store],['settings','الإعدادات',Settings]];
 export default function AdminDashboard({items,onAdd,onLeave,notice,children,hasDraft,busy,token,categories=[],categoryContent,onAddNew,onEditNew}){
  const management=useManagement(token);
  const [section,setSection]=useState('overview'),[sidebar,setSidebar]=useState(false);
@@ -22,6 +23,7 @@ export default function AdminDashboard({items,onAdd,onLeave,notice,children,hasD
  <div hidden={section!=='products'} className="dashboard-catalog" dir="ltr">{children}</div>
  <div hidden={section!=='categories'}>{categoryContent}</div>
  {section==='arrivals'&&<NewArrivalsManager items={items} busy={busy} onAdd={()=>{onAddNew();setSection('products');setSidebar(false)}} onEdit={p=>{onEditNew(p);setSection('products');setSidebar(false)}}/>}
+ {section==='designs'&&<DesignRequests token={token}/>}
  {section==='analytics'&&<AnalyticsPanel management={management}/>}
  {section==='orders'&&<OrdersPanel management={management} token={token} products={items}/>}
  {section==='customers'&&<CustomersPanel management={management}/>}

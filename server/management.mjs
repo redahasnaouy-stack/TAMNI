@@ -1,3 +1,4 @@
+import {designRequest} from './designs.mjs';
 import {createHash,randomUUID} from 'node:crypto';
 const owner='redahasnaouy-stack';
 export const statuses={confirmation:['pending','confirmed','cancelled'],payment:['unpaid','paid','refunded'],shipping:['pending','preparing','shipped','delivered','returned']};
@@ -22,6 +23,7 @@ export function createManagementHandler({getStore,catalog,fetcher=fetch,now=()=>
   const url=new URL(req.url),resource=url.searchParams.get('resource')||'health',method=req.method;
   if(resource==='health'&&method==='GET'){const store=getStore();await store.get('system/health',{type:'json'});return reply({ready:true})}
   const store=getStore();
+  if(resource==='designs')return await designRequest({req,url,store,now,authenticate:()=>identity(req,store,fetcher),reply,fail});
   if(method==='POST'&&['orders','visits'].includes(resource)&&!req.headers.has('authorization')){
    const origin=req.headers.get('origin');if(origin&&origin!==url.origin)fail(403,'مصدر الطلب غير مسموح.');
    const input=await body(req);
