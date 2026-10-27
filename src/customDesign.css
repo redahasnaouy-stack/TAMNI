@@ -2,3 +2,9 @@
 
 .design-caption{border:1px solid #d7bda0;background:#f5ebdf;border-radius:3px;padding:14px;margin:0 0 20px}.design-caption>label{font-weight:600;font-size:11px!important}.design-caption>textarea{font-family:inherit;line-height:1.8;min-height:110px;background:#fff9f2!important;margin:10px 0!important;font-size:11px!important;color:#79583e!important}.design-caption>button{display:block;margin-left:auto;font-size:10px;text-decoration:underline;text-underline-offset:3px;color:#93472f;padding:5px}.design-caption>textarea:focus{outline:2px solid #bd8d6d;outline-offset:2px}
 .design-fields{min-width:0;margin:0;padding:0;border:0}.design-customer{display:grid;grid-template-columns:1fr 1fr;gap:0 16px}.design-customer>label:first-child{grid-column:1/-1}.design-receipt{margin-top:18px;padding:18px;border:1px solid #bda66e;line-height:1.8;font-size:12px}.design-receipt>a{margin-top:15px}@media(max-width:480px){.design-customer{grid-template-columns:1fr}}
+.custom-form .design-customer{margin:24px 0 22px;padding-top:22px;border-top:1px solid #454034;gap:18px 16px}
+.custom-form .design-customer label{display:flex;flex-direction:column;gap:9px;min-width:0;font-size:12px;line-height:1.5;color:#eee9dc}
+.custom-form .design-customer input{display:block;width:100%;min-width:0;min-height:48px;padding:13px 14px;border:1px solid #72654d;border-radius:4px;background:#211f1b;color:#f1eee5;font:inherit;font-size:14px;line-height:1.5;box-sizing:border-box}
+.custom-form .design-customer input:focus-visible{outline:2px solid #d0bc8e;outline-offset:3px;border-color:#d0bc8e}
+.custom-form .design-customer input[type=tel]{direction:ltr;text-align:start}
+.custom-form .design-fields>label{display:block;margin-bottom:20px}.custom-form .design-fields>label>textarea{display:block;width:100%;margin-top:10px}
